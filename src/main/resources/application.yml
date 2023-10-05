@@ -44,5 +44,5 @@ jwt:
   secret: aaaabbbsdifqbvaesoioegwaaaabbbsdidsfdsfdfsdfsdfsdfsdfsd
 
 iamport:
-  key: ${IAM_KEY}
-  secret: ${IAM_SECRET}
+  key: 1231234
+  secret: 6545323

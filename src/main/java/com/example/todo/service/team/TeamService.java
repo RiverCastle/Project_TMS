@@ -27,8 +27,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-@Slf4j // 나중에 지우기
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TeamService {
@@ -37,7 +38,7 @@ public class TeamService {
     private final MemberRepository memberRepository;
     private final TaskApiService taskApiService;
     private final UsersSubscriptionRepository usersSubscriptionRepository;
-    public static final int FREE_TEAM_PARTICIPANT_NUM = 5;
+    public static final int FREE_TEAM_PARTICIPANT_NUM = 25;
     @Transactional
     public void createTeam(Long userId, TeamCreateDto teamCreateDto) {
         User manager = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
@@ -130,7 +131,7 @@ public class TeamService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
 
-        if (team.getManagerId() != user.getId()) throw new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID);
+        if (!Objects.equals(team.getManagerId(), user.getId())) throw new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID);
 
         teamReposiotry.delete(team);
     }
@@ -152,7 +153,7 @@ public class TeamService {
 
     public Page<TeamOverviewDto> searchTeam(String keyword, Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        Page<TeamEntity> teamEntityPage = teamReposiotry.findAllByNameContainingAndDeletedAtIsNull(keyword, pageable);
+        Page<TeamEntity> teamEntityPage = teamReposiotry.findAllByNameContainingAndDeletedAtIsNullAndBelongsToIsNull(keyword, pageable);
 
         Page<TeamOverviewDto> teamOverviewDtoPage = teamEntityPage.map(TeamOverviewDto::fromEntity);
         return teamOverviewDtoPage;
@@ -173,5 +174,35 @@ public class TeamService {
         }
 
         return teamDetailsDto;
+    }
+
+    public void createSubTeam(Long userId, Long teamId, TeamCreateDto teamCreateDto) {
+        User manager = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        //팀 최대인원이 5명을 초과할 시 구독권을 구독해야 한다.
+        if (teamCreateDto.getParticipantNumMax() > FREE_TEAM_PARTICIPANT_NUM) {
+            UsersSubscriptionEntity usersSubscription = usersSubscriptionRepository.findByUsersAndSubscriptionStatus(manager, SubscriptionStatus.ACTIVE)
+                    .orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_ACTIVE_SUBSCRIPTION));
+            if (teamCreateDto.getParticipantNumMax() > usersSubscription.getSubscription().getMaxMember())
+                throw new TodoAppException(ErrorCode.EXCEED_ALLOWED_TEAM_MEMBERS);
+        }
+
+        TeamEntity teamEntity = new TeamEntity();
+        teamEntity.setName(teamCreateDto.getName());
+        teamEntity.setDescription(teamCreateDto.getDescription());
+        teamEntity.setJoinCode(teamCreateDto.getJoinCode());
+        teamEntity.setManager(manager);
+        teamEntity.setParticipantNumMax(teamCreateDto.getParticipantNumMax());
+        teamEntity.setBelongsTo(teamId); // 소속팀 설정
+
+        // manager를 멤버로 추가
+        MemberEntity member = new MemberEntity();
+        member.setTeam(teamEntity);
+        member.setUser(manager);
+
+        teamEntity.setMembers(new ArrayList<>());
+        teamEntity.getMembers().add(member);
+        teamEntity.setParticipantNum(teamEntity.getMembers().size());
+        teamReposiotry.save(teamEntity);
+        memberRepository.save(member);
     }
 }
