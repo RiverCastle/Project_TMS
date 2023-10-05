@@ -20,7 +20,9 @@ public class TeamEntity extends BaseTimeEntity {
     private String description;
     private String joinCode;
     @Nullable
-    private Long belongsTo;
+    private Long motherId;
+    @Nullable
+    private Long belongsToId;
     private Integer participantNum;
     private Integer participantNumMax;
 //
@@ -33,8 +35,6 @@ public class TeamEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
     private List<MemberEntity> members;
 
-
-   
     public Long getManagerId() {
         return manager.getId();
     }

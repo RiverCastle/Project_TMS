@@ -153,7 +153,7 @@ public class TeamService {
 
     public Page<TeamOverviewDto> searchTeam(String keyword, Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        Page<TeamEntity> teamEntityPage = teamReposiotry.findAllByNameContainingAndDeletedAtIsNullAndBelongsToIsNull(keyword, pageable);
+        Page<TeamEntity> teamEntityPage = teamReposiotry.findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(keyword, pageable);
 
         Page<TeamOverviewDto> teamOverviewDtoPage = teamEntityPage.map(TeamOverviewDto::fromEntity);
         return teamOverviewDtoPage;
@@ -177,10 +177,13 @@ public class TeamService {
     }
 
     public void createSubTeam(Long userId, Long teamId, TeamCreateDto teamCreateDto) {
-        User manager = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
+        MemberEntity memberCheck = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+
         //팀 최대인원이 5명을 초과할 시 구독권을 구독해야 한다.
         if (teamCreateDto.getParticipantNumMax() > FREE_TEAM_PARTICIPANT_NUM) {
-            UsersSubscriptionEntity usersSubscription = usersSubscriptionRepository.findByUsersAndSubscriptionStatus(manager, SubscriptionStatus.ACTIVE)
+            UsersSubscriptionEntity usersSubscription = usersSubscriptionRepository.findByUsersAndSubscriptionStatus(user, SubscriptionStatus.ACTIVE)
                     .orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_ACTIVE_SUBSCRIPTION));
             if (teamCreateDto.getParticipantNumMax() > usersSubscription.getSubscription().getMaxMember())
                 throw new TodoAppException(ErrorCode.EXCEED_ALLOWED_TEAM_MEMBERS);
@@ -190,14 +193,16 @@ public class TeamService {
         teamEntity.setName(teamCreateDto.getName());
         teamEntity.setDescription(teamCreateDto.getDescription());
         teamEntity.setJoinCode(teamCreateDto.getJoinCode());
-        teamEntity.setManager(manager);
+        teamEntity.setManager(user);
         teamEntity.setParticipantNumMax(teamCreateDto.getParticipantNumMax());
-        teamEntity.setBelongsTo(teamId); // 소속팀 설정
+        Long motherId = team.getMotherId() == null ? team.getId() : team.getMotherId();
+        teamEntity.setMotherId(motherId); // 모조직 설정
+        teamEntity.setBelongsToId(teamId); // 소속팀 설정
 
         // manager를 멤버로 추가
         MemberEntity member = new MemberEntity();
         member.setTeam(teamEntity);
-        member.setUser(manager);
+        member.setUser(user);
 
         teamEntity.setMembers(new ArrayList<>());
         teamEntity.getMembers().add(member);

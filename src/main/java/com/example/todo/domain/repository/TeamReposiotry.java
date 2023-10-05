@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface TeamReposiotry extends JpaRepository<TeamEntity, Long> {
-    Page<TeamEntity> findAllByNameContainingAndDeletedAtIsNullAndBelongsToIsNull(String keyword, Pageable pageable);
+    Page<TeamEntity> findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(String keyword, Pageable pageable);
 //    Page<TeamEntity> findTeamEntitiesByNameAndDeletedAtEmpty(String keyword, Pageable pageable);
     List<TeamEntity> findByMembersUserId(Long userId);
     @Lock(LockModeType.PESSIMISTIC_WRITE)
