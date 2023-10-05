@@ -29,4 +29,6 @@ public interface TeamReposiotry extends JpaRepository<TeamEntity, Long> {
             "from TeamEntity t " +
             "where t.id =:teamId")
     Optional<TeamEntity> findByIdWithOptimisticLock(@Param("teamId") Long teamId);
+
+    List<TeamEntity> findAllByMotherId(Long motherTeamId);
 }

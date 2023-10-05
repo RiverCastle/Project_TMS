@@ -159,6 +159,18 @@ public class TeamService {
         return teamOverviewDtoPage;
     }
 
+    public List<SubTeamOverviewDto> searchSubTeams(Long userId, Long motherTeamId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        TeamEntity motherTeam = teamReposiotry.findById(motherTeamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
+        MemberEntity member = memberRepository.findByTeamAndUser(motherTeam, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+
+        List<TeamEntity> subTeamEntityList = teamReposiotry.findAllByMotherId(motherTeamId);
+        List<SubTeamOverviewDto> subTeamOverviewDtoList = new ArrayList<>();
+        for (TeamEntity subTeamEntity : subTeamEntityList) subTeamOverviewDtoList.add(SubTeamOverviewDto.fromEntity(subTeamEntity));
+
+        return subTeamOverviewDtoList;
+    }
+
     public TeamDetailsDto getTeamDetails(Long userId, Long teamId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));

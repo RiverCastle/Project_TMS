@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -67,6 +70,12 @@ public class TeamController {
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage(String.format("%d팀 소속의 %s 등록이 완료되었습니다.", teamId, teamCreateDto.getName()));
         return responseDto;
+    }
+    @GetMapping("/{teamId}/subTeam")
+    public List<SubTeamOverviewDto> searchSubTeam(Authentication authentication,
+                                                  @PathVariable("teamId") Long teamId) {
+        Long userId = Long.parseLong(authentication.getName());
+        return teamService.searchSubTeams(userId, teamId);
     }
 
     @PostMapping("/{teamId}/member")
