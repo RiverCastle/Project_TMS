@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface TeamReposiotry extends JpaRepository<TeamEntity, Long> {
-    Page<TeamEntity> findAllByNameContainingAndDeletedAtIsNull(String keyword, Pageable pageable);
+    Page<TeamEntity> findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(String keyword, Pageable pageable);
 //    Page<TeamEntity> findTeamEntitiesByNameAndDeletedAtEmpty(String keyword, Pageable pageable);
     List<TeamEntity> findByMembersUserId(Long userId);
     @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -29,4 +29,6 @@ public interface TeamReposiotry extends JpaRepository<TeamEntity, Long> {
             "from TeamEntity t " +
             "where t.id =:teamId")
     Optional<TeamEntity> findByIdWithOptimisticLock(@Param("teamId") Long teamId);
+
+    List<TeamEntity> findAllByMotherId(Long motherTeamId);
 }

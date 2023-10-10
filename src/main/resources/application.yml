@@ -2,10 +2,14 @@ spring:
   profiles:
     include: oauth
   datasource:
-    url: jdbc:mysql://${RDS_URL}/todo
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: angksehwjs031
+    url: jdbc:sqlite:db.sqlite
+    driver-class-name: org.sqlite.JDBC
+    username: sa
+    password: password
+    #    url: jdbc:mysql://${RDS_URL}/todo
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    username: admin
+    #    password: angksehwjs031
 
   mail:
     host: smtp.gmail.com
@@ -40,5 +44,5 @@ jwt:
   secret: ${JWT_SECRET}
 
 iamport:
-  key: ${IAM_KEY}
-  secret: ${IAM_SECRET}
+  key: 1231234
+  secret: 6545323

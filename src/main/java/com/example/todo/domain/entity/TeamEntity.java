@@ -1,6 +1,7 @@
 package com.example.todo.domain.entity;
 
 import com.example.todo.domain.entity.user.User;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,10 @@ public class TeamEntity extends BaseTimeEntity {
     private String name;
     private String description;
     private String joinCode;
+    @Nullable
+    private Long motherId;
+    @Nullable
+    private Long belongsToId;
     private Integer participantNum;
     private Integer participantNumMax;
 //
@@ -30,8 +35,6 @@ public class TeamEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
     private List<MemberEntity> members;
 
-
-   
     public Long getManagerId() {
         return manager.getId();
     }
