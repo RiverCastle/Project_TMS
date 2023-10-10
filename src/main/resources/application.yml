@@ -37,7 +37,7 @@ spring:
       port: 6379
 
 jwt:
-  secret: aaaabbbsdifqbvaesoioegwaaaabbbsdidsfdsfdfsdfsdfsdfsdfsd
+  secret: ${JWT_SECRET}
 
 iamport:
   key: ${IAM_KEY}
