@@ -1,8 +1,3 @@
-﻿# Final_Project_10team
+﻿# Task Management System
 
-# TEAM_MEMBER : 윤병일, 최강성, 한중호, 안채연
-## 2023-08-11 start
-### 2023 - 09 - 15 end
-2023-08-30 1차 배포 테스트, 2차 테스트, 3차 테스트, 4차 테스트  
-2023-09-13 10차 배포 todo-v1.0  
-2023-09-13 OAuth2.0 로그인 체크
+Please visit here: https://www.notion.so/0d27c48dc631405a9ad960ec78644339#156953266a85498c8d21422934191d8a

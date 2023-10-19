@@ -21,17 +21,6 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
 //    private final RedissonLockTeamFacade redissonLockStockFacade;
-
-    @GetMapping
-    public String getTeamCreatePage(Authentication authentication) {
-        return "team-create.html";
-    }
-
-    @GetMapping("/search-page")
-    public String getTeamSearchPage() {
-        return "team-search.html";
-    }
-
     @GetMapping("/search")
     public Page<TeamOverviewDto> searchTeam(@RequestParam("keyword") String keyword,
                                             @RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -60,6 +49,13 @@ public class TeamController {
         return responseDto;
     }
 
+    @GetMapping("/{teamId}/subTeam")
+    public List<SubTeamOverviewDto> searchSubTeam(Authentication authentication,
+                                                  @PathVariable("teamId") Long teamId) {
+        Long userId = Long.parseLong(authentication.getName());
+        return teamService.searchSubTeams(userId, teamId);
+    }
+
     @PostMapping("/{teamId}/subTeam")
     public ResponseDto createSubTeam(Authentication authentication,
                                      @PathVariable("teamId") Long teamId,
@@ -70,12 +66,6 @@ public class TeamController {
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage(String.format("%d팀 소속의 %s 등록이 완료되었습니다.", teamId, teamCreateDto.getName()));
         return responseDto;
-    }
-    @GetMapping("/{teamId}/subTeam")
-    public List<SubTeamOverviewDto> searchSubTeam(Authentication authentication,
-                                                  @PathVariable("teamId") Long teamId) {
-        Long userId = Long.parseLong(authentication.getName());
-        return teamService.searchSubTeams(userId, teamId);
     }
 
     @PostMapping("/{teamId}/member")
