@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Greeting</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9">
+    <style>
+        .table {
+            width: 100%; /* 테이블의 너비를 100%로 설정합니다. 부모 요소에 맞게 조절됩니다. */
+        }
+        .center-align {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<p>안녕하세요 Task Management System 입니다.</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>팀 이름</th>
+        <th>팀 매니저</th>
+        <th>팀 설명</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="teamOverviewDto : ${teamOverviewDtoList}" class="table-row">
+        <td th:text="${teamOverviewDto.id}" class="center-align">Id</td>
+        <td class="center-align">
+            <a th:href="@{'/views/team/' + ${teamOverviewDto.id}}"> <!-- 여기서 '/team/details/'는 상세 페이지 URL로 변경해야 합니다. -->
+                <span th:text="${teamOverviewDto.teamName}">팀 이름</span>
+            </a>
+        </td>
+        <td th:text="${teamOverviewDto.teamManagerName}" class="center-align">팀 매니저</td>
+        <td th:text="${teamOverviewDto.teamDesc}" class="center-align">팀 설명</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+
+</html>
