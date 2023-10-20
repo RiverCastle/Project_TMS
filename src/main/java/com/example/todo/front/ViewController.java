@@ -19,4 +19,9 @@ public class ViewController {
         System.out.println("메인으로 이동");
         return "main";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 }
