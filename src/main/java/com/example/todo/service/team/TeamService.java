@@ -151,12 +151,12 @@ public class TeamService {
     }
 
 
-    public Page<TeamOverviewDto> searchTeam(String keyword, Integer page, Integer limit) {
-        Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        Page<TeamEntity> teamEntityPage = teamReposiotry.findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(keyword, pageable);
+    public List<TeamOverviewDto> searchTeam(String keyword) {
+        List<TeamEntity> teamEntityList = teamReposiotry.findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(keyword);
+        List<TeamOverviewDto> teamOverviewDtoList = new ArrayList<>();
+        for (TeamEntity teamEntity: teamEntityList) teamOverviewDtoList.add(TeamOverviewDto.fromEntity(teamEntity));
 
-        Page<TeamOverviewDto> teamOverviewDtoPage = teamEntityPage.map(TeamOverviewDto::fromEntity);
-        return teamOverviewDtoPage;
+        return teamOverviewDtoList;
     }
 
     public List<SubTeamOverviewDto> searchSubTeams(Long userId, Long motherTeamId) {

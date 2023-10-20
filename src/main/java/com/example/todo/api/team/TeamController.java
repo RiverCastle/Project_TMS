@@ -22,10 +22,8 @@ public class TeamController {
     private final TeamService teamService;
 //    private final RedissonLockTeamFacade redissonLockStockFacade;
     @GetMapping("/search")
-    public Page<TeamOverviewDto> searchTeam(@RequestParam("keyword") String keyword,
-                                            @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                            @RequestParam(value = "limit", defaultValue = "30") Integer limit) {
-        return teamService.searchTeam(keyword, page, limit);
+    public List<TeamOverviewDto> searchTeam(@RequestParam("keyword") String keyword) {
+        return teamService.searchTeam(keyword);
     }
 
     @GetMapping("/{teamId}")
