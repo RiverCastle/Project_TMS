@@ -3,9 +3,11 @@ package com.example.todo.front;
 
 import com.example.todo.api.team.TeamController;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -23,5 +25,13 @@ public class ViewController {
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @GetMapping("/team/teamId")
+    public String teamPage(Model model,
+                           @PathVariable("teamId") Long teamId,
+                           Authentication authentication) {
+        model.addAttribute("teamDetails", teamController.getTeamDetails(authentication, teamId));
+        return "team-page";
     }
 }

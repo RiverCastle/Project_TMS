@@ -27,7 +27,7 @@ public class TeamController {
     }
 
     @GetMapping("/{teamId}")
-    public TeamDetailsDto getTeamPage(Authentication authentication,
+    public TeamDetailsDto getTeamDetails(Authentication authentication,
                                          @PathVariable("teamId") Long teamId) {
         Long userId = Long.parseLong(authentication.getName());
         return teamService.getTeamDetails(userId, teamId);

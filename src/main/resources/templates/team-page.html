@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${teamDetailsDto.name} + ' 페이지'" ></title>
+</head>
+<body>
+<h1 th:text="${teamDetailsDto.name}">팀 이름</h1>
+<p th:text="${teamDetailsDto.managerName}">팀 매니저</p>
+<p th:text="${teamDetailsDto.desc}">팀 설명</p>
+
+<h2>팀 멤버</h2>
+<ul>
+    <li th:each="member : ${teamDetailsDto.members}" th:text="${member}"></li>
+</ul>
+
+<p th:text="'최대 인원: ' + ${teamDetailsDto.memberLimit}"></p>
+
+<h2>미완료 작업</h2>
+<ul>
+    <li th:each="task : ${teamDetailsDto.notDoneTasks}">
+        <p th:text="${task.taskName}">작업 이름</p>
+        <p th:text="${task.taskDescription}">작업 설명</p>
+    </li>
+</ul>
+
+<h2>완료된 작업</h2>
+<ul>
+    <li th:each="task : ${teamDetailsDto.doneTasks}">
+        <p th:text="${task.taskName}">작업 이름</p>
+        <p th:text="${task.taskDescription}">작업 설명</p>
+    </li>
+</ul>
+
+<h2>전체 작업</h2>
+<ul>
+    <li th:each="task : ${teamDetailsDto.allTasks}">
+        <p th:text="${task.taskName}">작업 이름</p>
+        <p th:text="${task.taskDescription}">작업 설명</p>
+    </li>
+</ul>
+</body>
+</html>
