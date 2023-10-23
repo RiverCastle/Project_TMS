@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RestController
 public class UserApiController {
 
@@ -31,7 +31,7 @@ public class UserApiController {
     private final UserReadService readService;
     private final TaskApiService taskApiService;
 
-    @PostMapping("/join")
+    @PostMapping
     public Response<UserJoinResponseDto> createUser(@RequestBody final UserJoinRequestDto joinDto) {
         return Response.success(userService.createUser(joinDto));
     }
@@ -51,7 +51,7 @@ public class UserApiController {
         return readService.getUsersWithExpirationOneWeek();
     }
 
-    @PutMapping("/users/update")
+    @PutMapping
     public Response<UserUpdateResponseDto> updateUser(@RequestBody final UserUpdateRequestDto updateDto,
                                                       final Authentication authentication) {
         final Long userId = Long.parseLong(authentication.getName());
