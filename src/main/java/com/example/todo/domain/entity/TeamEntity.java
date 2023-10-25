@@ -33,23 +33,4 @@ public class TeamEntity extends BaseTimeEntity {
     private String description;
     private Integer participantNum;
     private Integer participantNumMax;
-//
-//    @Version
-//    private Long version;
-
-//    @ManyToOne
-//    private User manager;
-//
-//    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
-//    private List<MemberEntity> members;
-//
-//    public Long getManagerId() {
-//        return manager.getId();
-//    }
-//    public List<String> getMemebersNamesList(List<MemberEntity> members) {
-//        List<String> membersNamesList = new ArrayList<>();
-//        for (MemberEntity member : members) membersNamesList.add(member.getUser().getUsername());
-//
-//        return membersNamesList;
-//    }
 }

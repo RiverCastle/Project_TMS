@@ -51,7 +51,7 @@ public class TeamService {
         teamEntity.setName(teamCreateDto.getName());
         teamEntity.setDescription(teamCreateDto.getDescription());
         teamEntity.setJoinCode(teamCreateDto.getJoinCode());
-//        teamEntity.setManager(manager);
+        teamEntity.setParticipantNum(1);
         teamEntity.setParticipantNumMax(teamCreateDto.getParticipantNumMax());
 
         // manager를 멤버로 추가
@@ -59,11 +59,8 @@ public class TeamService {
         member.setTeam(teamEntity);
         member.setUser(manager);
         member.setRole("Manager");
-        log.info(member.getUser().toString());
-        log.info("OKOK");
-//        teamEntity.setMembers(new ArrayList<>());
-//        teamEntity.getMembers().add(member);
         teamEntity.setParticipantNum(1);
+
         teamReposiotry.save(teamEntity);
         memberRepository.save(member);
     }
@@ -91,7 +88,6 @@ public class TeamService {
         member.setUser(user);
         memberRepository.save(member);
 
-//        team.getMembers().add(member);
         team.setParticipantNum(team.getParticipantNum() + 1);
         teamReposiotry.save(team);
 
@@ -105,10 +101,8 @@ public class TeamService {
         if (!teamUpdateDto.getName().equals(""))
             team.setName(teamUpdateDto.getName());
 
-
         if (!teamUpdateDto.getDescription().equals(""))
             team.setDescription(teamUpdateDto.getDescription());
-
 
         if (!teamUpdateDto.getJoinCode().equals(""))
             team.setJoinCode(teamUpdateDto.getJoinCode());
@@ -157,7 +151,6 @@ public class TeamService {
         List<TeamOverviewDto> teamOverviewDtoList = new ArrayList<>();
         for (TeamEntity teamEntity: teamEntityList) {
             TeamOverviewDto teamOverviewDto = TeamOverviewDto.fromEntity(teamEntity);
-            // TODO 관리자 표시 설정
             MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(teamEntity, "Manager");
             teamOverviewDto.setTeamManagerName(managerMember.getUser().getUsername());
             teamOverviewDtoList.add(teamOverviewDto);
@@ -187,7 +180,6 @@ public class TeamService {
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
 
         TeamDetailsDto teamDetailsDto = TeamDetailsDto.fromEntity(team);
-        // TODO 관리자 표시 설정
         MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(team, "Manager");
         teamDetailsDto.setManagerName(managerMember.getUser().getUsername());
         List<TaskApiDto> allTasksDtoList = taskApiService.readTasksAll(userId, teamId);
@@ -217,7 +209,6 @@ public class TeamService {
         teamEntity.setName(teamCreateDto.getName());
         teamEntity.setDescription(teamCreateDto.getDescription());
         teamEntity.setJoinCode(teamCreateDto.getJoinCode());
-//        teamEntity.setManager(user);
         teamEntity.setParticipantNumMax(teamCreateDto.getParticipantNumMax());
         Long motherId = team.getMotherId() == null ? team.getId() : team.getMotherId();
         teamEntity.setMotherId(motherId); // 모조직 설정
@@ -231,7 +222,5 @@ public class TeamService {
         member.setRole("Manager");
         teamReposiotry.save(teamEntity);
         memberRepository.save(member);
-//        teamEntity.setMembers(new ArrayList<>());
-//        teamEntity.getMembers().add(member);
     }
 }

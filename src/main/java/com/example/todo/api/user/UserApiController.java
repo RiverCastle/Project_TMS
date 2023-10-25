@@ -36,16 +36,6 @@ public class UserApiController {
         return Response.success(userService.createUser(joinDto));
     }
 
-//    @PostMapping("/join2")
-//    public void ct() {
-//        userService.createUserData();
-//    }
-//
-//    @PostMapping("/findAll")
-//    public void findAllUser() {
-//        userService.userSubscription();
-//    }
-
     @GetMapping("/find")
     public List<UserAllResponseDto> findAll() {
         return readService.getUsersWithExpirationOneWeek();
