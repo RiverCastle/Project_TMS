@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface TeamReposiotry extends JpaRepository<TeamEntity, Long> {
     List<TeamEntity> findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(String keyword);
-//    List<TeamEntity> findByMembersUserId(Long userId);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select t " +
             "from TeamEntity t " +

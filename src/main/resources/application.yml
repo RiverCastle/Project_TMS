@@ -2,14 +2,14 @@ spring:
   profiles:
     include: oauth
   datasource:
-        url: jdbc:sqlite:db.sqlite
-        driver-class-name: org.sqlite.JDBC
-        username: ${SQLite_Username}
-        password: ${SQLite_Password}
-#    url: jdbc:mysql://localhost:3306/db2
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: ${MySQL_Username}
-#    password: ${MySQL_Password}
+#        url: jdbc:sqlite:db.sqlite
+#        driver-class-name: org.sqlite.JDBC
+#        username: ${SQLite_Username}
+#        password: ${SQLite_Password}
+    url: jdbc:mysql://localhost:3306/db2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MySQL_Username}
+    password: ${MySQL_Password}
 
   mail:
     host: smtp.gmail.com
@@ -26,7 +26,7 @@ spring:
   jpa:
     #    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
