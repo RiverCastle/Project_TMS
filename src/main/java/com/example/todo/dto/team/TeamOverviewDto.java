@@ -18,7 +18,7 @@ public class TeamOverviewDto {
         TeamOverviewDto teamOverviewDto = new TeamOverviewDto();
         teamOverviewDto.setId(teamEntity.getId());
         teamOverviewDto.setTeamName(teamEntity.getName());
-        teamOverviewDto.setTeamManagerName(teamEntity.getManager().getUsername());
+//        teamOverviewDto.setTeamManagerName(teamEntity.getManager().getUsername());
         teamOverviewDto.setTeamDesc(teamEntity.getDescription());
         return teamOverviewDto;
     }

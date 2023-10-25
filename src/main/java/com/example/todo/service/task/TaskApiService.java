@@ -63,20 +63,16 @@ public class TaskApiService {
 
     //멤버인지 확인
     public boolean isMemberOfTeam(Long userId, Long teamId) {
-        TeamEntity teamEntity = getTeamById(teamId);
-        List<MemberEntity> members = teamEntity.getMembers();
-
-        for (MemberEntity member : members) {
-            if (member.getUser().getId().equals(userId)) {
-                return true; // 사용자가 해당 팀의 멤버인 경우 true 반환
-            }
-        }
-        return false; // 사용자가 해당 팀의 멤버가 아닌 경우 false 반환
+        User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        TeamEntity teamEntity = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
+        if (memberRepository.findByTeamAndUser(teamEntity, user).isEmpty()) return false;
+        else return true;
     }
 
     public void isAvailableFunction(TeamEntity teamEntity) {
         if (teamEntity.getParticipantNumMax() > FREE_TEAM_PARTICIPANT_NUM) {
-            UsersSubscriptionEntity usersSubscription = usersSubscriptionRepository.findByUsersAndSubscriptionStatus(teamEntity.getManager(), SubscriptionStatus.ACTIVE)
+            MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(teamEntity, "Manager");
+            UsersSubscriptionEntity usersSubscription = usersSubscriptionRepository.findByUsersAndSubscriptionStatus(managerMember.getUser(), SubscriptionStatus.ACTIVE)
                     .orElseThrow(() -> new TodoAppException(ErrorCode.NOT_AVAILABLE_FUNCTION));
             if (usersSubscription.getSubscription().getMaxMember() < teamEntity.getParticipantNumMax())
                 throw new TodoAppException(ErrorCode.NOT_AVAILABLE_FUNCTION);

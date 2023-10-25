@@ -19,7 +19,7 @@ public class SubTeamOverviewDto {
         SubTeamOverviewDto subTeamOverviewDto = new SubTeamOverviewDto();
         subTeamOverviewDto.setId(teamEntity.getId());
         subTeamOverviewDto.setTeamName(teamEntity.getName());
-        subTeamOverviewDto.setTeamManagerName(teamEntity.getManager().getUsername());
+//        subTeamOverviewDto.setTeamManagerName(teamEntity.getManager().getUsername());
         subTeamOverviewDto.setTeamDesc(teamEntity.getDescription());
         subTeamOverviewDto.setBelongsToId(teamEntity.getBelongsToId());
         return subTeamOverviewDto;

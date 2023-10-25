@@ -16,10 +16,7 @@ import com.example.todo.exception.TodoAppException;
 import com.example.todo.service.task.TaskApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -43,7 +39,7 @@ public class TeamService {
     public void createTeam(Long userId, TeamCreateDto teamCreateDto) {
         User manager = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
 
-        //팀 최대인원이 5명을 초과할 시 구독권을 구독해야 한다.
+        //팀 최대인원이 25명을 초과할 시 구독권을 구독해야 한다.
         if (teamCreateDto.getParticipantNumMax() > FREE_TEAM_PARTICIPANT_NUM) {
             UsersSubscriptionEntity usersSubscription = usersSubscriptionRepository.findByUsersAndSubscriptionStatus(manager, SubscriptionStatus.ACTIVE)
                     .orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_ACTIVE_SUBSCRIPTION));
@@ -55,17 +51,19 @@ public class TeamService {
         teamEntity.setName(teamCreateDto.getName());
         teamEntity.setDescription(teamCreateDto.getDescription());
         teamEntity.setJoinCode(teamCreateDto.getJoinCode());
-        teamEntity.setManager(manager);
+//        teamEntity.setManager(manager);
         teamEntity.setParticipantNumMax(teamCreateDto.getParticipantNumMax());
 
         // manager를 멤버로 추가
         MemberEntity member = new MemberEntity();
         member.setTeam(teamEntity);
         member.setUser(manager);
-
-        teamEntity.setMembers(new ArrayList<>());
-        teamEntity.getMembers().add(member);
-        teamEntity.setParticipantNum(teamEntity.getMembers().size());
+        member.setRole("Manager");
+        log.info(member.getUser().toString());
+        log.info("OKOK");
+//        teamEntity.setMembers(new ArrayList<>());
+//        teamEntity.getMembers().add(member);
+        teamEntity.setParticipantNum(1);
         teamReposiotry.save(teamEntity);
         memberRepository.save(member);
     }
@@ -85,7 +83,6 @@ public class TeamService {
         if (team.getParticipantNum().equals(team.getParticipantNumMax()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "팀의 최대 허용 멤버 수를 초과했습니다.");
 
-
         if (memberRepository.findByTeamAndUser(team, user).isPresent())
             throw new TodoAppException(ErrorCode.ALREADY_USER_JOINED);
 
@@ -94,18 +91,16 @@ public class TeamService {
         member.setUser(user);
         memberRepository.save(member);
 
-        team.getMembers().add(member);
+//        team.getMembers().add(member);
         team.setParticipantNum(team.getParticipantNum() + 1);
         teamReposiotry.save(team);
 
     }
 
     public void updateTeamDetails(Long userId, TeamUpdateDto teamUpdateDto, Long teamId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        User managerUser = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
-
-        if (team.getManagerId() != user.getId()) throw new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID);
-
+        MemberEntity managerUserMemberEntity = memberRepository.findByTeamAndUser(team, managerUser).orElseThrow(() -> new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID));
 
         if (!teamUpdateDto.getName().equals(""))
             team.setName(teamUpdateDto.getName());
@@ -118,20 +113,26 @@ public class TeamService {
         if (!teamUpdateDto.getJoinCode().equals(""))
             team.setJoinCode(teamUpdateDto.getJoinCode());
 
+        teamReposiotry.save(team);
 
-        if (!teamUpdateDto.getManager().getUsername().equals("")) {
-            MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
-            team.setManager(member.getUser());
+        String nextManagerUsername = teamUpdateDto.getManager().getUsername();
+        if (!nextManagerUsername.equals("")) {
+            User nextManagerUser = userRepository.findByUsername(nextManagerUsername).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+            MemberEntity nextManagerUserMemberEntity = memberRepository.findByTeamAndUser(team, nextManagerUser).orElseThrow(() -> new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID));
+            nextManagerUserMemberEntity.setRole("Manager");
+            managerUserMemberEntity.setRole("Member");
+            memberRepository.save(nextManagerUserMemberEntity);
+            memberRepository.save(managerUserMemberEntity);
         }
 
-        teamReposiotry.save(team);
     }
 
     public void deleteTeam(Long userId, Long teamId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
-
-        if (!Objects.equals(team.getManagerId(), user.getId())) throw new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID);
+        MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+        String role = member.getRole();
+        if (!role.equals("Manager")) throw new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID);
 
         teamReposiotry.delete(team);
     }
@@ -141,10 +142,10 @@ public class TeamService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+        if (member.getRole().equals("Manager")) throw new TodoAppException(ErrorCode.NOT_ALLOWED_LEAVE);
 
         member.setTeam(null);
         memberRepository.delete(member);
-        team.getMembers().remove(member);
         log.info("part {}", team.getParticipantNum() - 1);
         team.setParticipantNum(team.getParticipantNum() - 1);
         teamReposiotry.save(team);
@@ -154,8 +155,13 @@ public class TeamService {
     public List<TeamOverviewDto> searchTeam(String keyword) {
         List<TeamEntity> teamEntityList = teamReposiotry.findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(keyword);
         List<TeamOverviewDto> teamOverviewDtoList = new ArrayList<>();
-        for (TeamEntity teamEntity: teamEntityList) teamOverviewDtoList.add(TeamOverviewDto.fromEntity(teamEntity));
-
+        for (TeamEntity teamEntity: teamEntityList) {
+            TeamOverviewDto teamOverviewDto = TeamOverviewDto.fromEntity(teamEntity);
+            // TODO 관리자 표시 설정
+            MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(teamEntity, "Manager");
+            teamOverviewDto.setTeamManagerName(managerMember.getUser().getUsername());
+            teamOverviewDtoList.add(teamOverviewDto);
+        }
         return teamOverviewDtoList;
     }
 
@@ -166,8 +172,12 @@ public class TeamService {
 
         List<TeamEntity> subTeamEntityList = teamReposiotry.findAllByMotherId(motherTeamId);
         List<SubTeamOverviewDto> subTeamOverviewDtoList = new ArrayList<>();
-        for (TeamEntity subTeamEntity : subTeamEntityList) subTeamOverviewDtoList.add(SubTeamOverviewDto.fromEntity(subTeamEntity));
-
+        for (TeamEntity subTeamEntity : subTeamEntityList) {
+            SubTeamOverviewDto subTeamOverviewDto = SubTeamOverviewDto.fromEntity(subTeamEntity);
+            MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(subTeamEntity, "Manager");
+            subTeamOverviewDto.setTeamManagerName(managerMember.getUser().getUsername());
+            subTeamOverviewDtoList.add(subTeamOverviewDto);
+        }
         return subTeamOverviewDtoList;
     }
 
@@ -177,7 +187,9 @@ public class TeamService {
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
 
         TeamDetailsDto teamDetailsDto = TeamDetailsDto.fromEntity(team);
-
+        // TODO 관리자 표시 설정
+        MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(team, "Manager");
+        teamDetailsDto.setManagerName(managerMember.getUser().getUsername());
         List<TaskApiDto> allTasksDtoList = taskApiService.readTasksAll(userId, teamId);
         for (TaskApiDto taskApiDto : allTasksDtoList) {
             teamDetailsDto.getAllTasks().add(taskApiDto);
@@ -191,7 +203,7 @@ public class TeamService {
     public void createSubTeam(Long userId, Long teamId, TeamCreateDto teamCreateDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
-        MemberEntity memberCheck = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+        MemberEntity supTeamMember = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
 
         //팀 최대인원이 5명을 초과할 시 구독권을 구독해야 한다.
         if (teamCreateDto.getParticipantNumMax() > FREE_TEAM_PARTICIPANT_NUM) {
@@ -205,21 +217,21 @@ public class TeamService {
         teamEntity.setName(teamCreateDto.getName());
         teamEntity.setDescription(teamCreateDto.getDescription());
         teamEntity.setJoinCode(teamCreateDto.getJoinCode());
-        teamEntity.setManager(user);
+//        teamEntity.setManager(user);
         teamEntity.setParticipantNumMax(teamCreateDto.getParticipantNumMax());
         Long motherId = team.getMotherId() == null ? team.getId() : team.getMotherId();
         teamEntity.setMotherId(motherId); // 모조직 설정
         teamEntity.setBelongsToId(teamId); // 소속팀 설정
+        teamEntity.setParticipantNum(1);
 
         // manager를 멤버로 추가
         MemberEntity member = new MemberEntity();
         member.setTeam(teamEntity);
         member.setUser(user);
-
-        teamEntity.setMembers(new ArrayList<>());
-        teamEntity.getMembers().add(member);
-        teamEntity.setParticipantNum(teamEntity.getMembers().size());
+        member.setRole("Manager");
         teamReposiotry.save(teamEntity);
         memberRepository.save(member);
+//        teamEntity.setMembers(new ArrayList<>());
+//        teamEntity.getMembers().add(member);
     }
 }

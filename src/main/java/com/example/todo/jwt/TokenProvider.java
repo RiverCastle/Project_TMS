@@ -34,7 +34,7 @@ public class TokenProvider {
     public String createAccessToken(User user) {
         return Jwts.builder()
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(864000)))
+                .setExpiration(Date.from(Instant.now().plusSeconds(60*60*24*30)))
                 .claim("id", user.getId())
                 .claim("role", user.getRole())
                 .signWith(key)

@@ -22,9 +22,9 @@ public class TeamDetailsDto {
     public static TeamDetailsDto fromEntity(TeamEntity teamEntity) {
         TeamDetailsDto teamDetailsDto = new TeamDetailsDto();
         teamDetailsDto.setName(teamEntity.getName());
-        teamDetailsDto.setManagerName(teamEntity.getManager().getUsername());
+//        teamDetailsDto.setManagerName(teamEntity.getManager().getUsername());
         teamDetailsDto.setDesc(teamEntity.getDescription());
-        teamDetailsDto.setMembers(teamEntity.getMemebersNamesList(teamEntity.getMembers()));
+//        teamDetailsDto.setMembers(teamEntity.getMemebersNamesList(teamEntity.getMembers()));
         teamDetailsDto.setMemberLimit(teamEntity.getParticipantNumMax());
 
         return teamDetailsDto;
