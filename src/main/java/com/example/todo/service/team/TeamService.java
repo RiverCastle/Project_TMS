@@ -120,7 +120,6 @@ public class TeamService {
 
         teamReposiotry.save(team);
 
-        // TODO 관리자 코드
         Optional<List<String>> optionalUsernamesList = Optional.ofNullable(teamUpdateDto.getUsernamesOfManagers());
         if (optionalUsernamesList.isPresent()) {
             List<String> usernamesToBeManager = teamUpdateDto.getUsernamesOfManagers();
