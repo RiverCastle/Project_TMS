@@ -87,7 +87,7 @@ public class TeamService {
         MemberEntity member = new MemberEntity();
         member.setTeam(team);
         member.setUser(user);
-        //TODO role 설정
+        member.setRole("Member");
         memberRepository.save(member);
 
         team.setParticipantNum(team.getParticipantNum() + 1);
