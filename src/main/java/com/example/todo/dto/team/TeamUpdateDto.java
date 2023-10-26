@@ -1,15 +1,21 @@
 package com.example.todo.dto.team;
 
-import com.example.todo.domain.entity.user.User;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
 public class TeamUpdateDto {
+    @NotBlank
+    @Nullable
     private String name;
+    @Nullable
     private String description;
+    @NotBlank
+    @Nullable
     private String joinCode;
+
     private List<String> usernamesOfManagers;
 }

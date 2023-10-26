@@ -46,7 +46,10 @@ public enum ErrorCode {
     ALREADY_USER_USERNAME(CONFLICT, "이미 존재하는 사용자입니다."),
     ALREADY_USER_JOINED(BAD_REQUEST, "이미 해당 팀에 가입한 유저입니다."),
     MISMATCH_MANAGERID_USERID(BAD_REQUEST, "팀의 관리자가 아닙니다."),
-    NOT_ALLOWED_LEAVE(BAD_REQUEST, "팀의 관리자는 팀을 나갈 수 없습니다. 다른 멤버에게 팀을 양도해주세요.");
+    NOT_ALLOWED_LEAVE(BAD_REQUEST, "팀의 관리자는 팀을 나갈 수 없습니다. 다른 멤버에게 팀을 양도해주세요."),
+    NOT_ALLOWED_EMPTY_TEAM_NAME(NOT_ACCEPTABLE, "팀의 이름을 비울 수는 없습니다."),
+    NOT_ALLOWED_EMPTY_JoinCode(NOT_ACCEPTABLE, "팀의 참여코드를 비울 수는 없습니다."),
+    NOT_ALLOWED_EMPTY_MANAGER(NOT_ACCEPTABLE, "팀의 관리자가 존재하지 않습니다. 1명 이상의 관리자를 설정해주세요.");
 
     private final HttpStatus httpStatus;
     private final String message;

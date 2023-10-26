@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -86,6 +87,7 @@ public class TeamService {
         MemberEntity member = new MemberEntity();
         member.setTeam(team);
         member.setUser(user);
+        //TODO role 설정
         memberRepository.save(member);
 
         team.setParticipantNum(team.getParticipantNum() + 1);
@@ -98,27 +100,37 @@ public class TeamService {
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
         MemberEntity managerUserMemberEntity = memberRepository.findByTeamAndUser(team, managerUser).orElseThrow(() -> new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID));
 
-        if (!teamUpdateDto.getName().equals(""))
-            team.setName(teamUpdateDto.getName());
+        Optional<String> name = Optional.ofNullable(teamUpdateDto.getName());
+        if (name.isPresent()) {
+            String nameValue = name.get();
+            if (nameValue.equals("")) throw new TodoAppException(ErrorCode.NOT_ALLOWED_EMPTY_TEAM_NAME);
+            else team.setName(nameValue);
+        }
 
-        if (!teamUpdateDto.getDescription().equals(""))
-            team.setDescription(teamUpdateDto.getDescription());
+        Optional<String> description = Optional.ofNullable(teamUpdateDto.getDescription());
+        description.ifPresent(team::setDescription);
+//                if (description.isPresent()) team.setDescription(description.get());
 
-        if (!teamUpdateDto.getJoinCode().equals(""))
-            team.setJoinCode(teamUpdateDto.getJoinCode());
+        Optional<String> joinCode = Optional.ofNullable(teamUpdateDto.getJoinCode());
+        if (joinCode.isPresent()) {
+            String joinCodeValue = joinCode.get();
+            if (joinCodeValue.equals("")) throw new TodoAppException(ErrorCode.NOT_ALLOWED_EMPTY_JoinCode);
+            else team.setJoinCode(joinCodeValue);
+        }
 
         teamReposiotry.save(team);
 
-        String nextManagerUsername = teamUpdateDto.getManager().getUsername();
-        if (!nextManagerUsername.equals("")) {
-            User nextManagerUser = userRepository.findByUsername(nextManagerUsername).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
-            MemberEntity nextManagerUserMemberEntity = memberRepository.findByTeamAndUser(team, nextManagerUser).orElseThrow(() -> new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID));
-            nextManagerUserMemberEntity.setRole("Manager");
-            managerUserMemberEntity.setRole("Member");
-            memberRepository.save(nextManagerUserMemberEntity);
-            memberRepository.save(managerUserMemberEntity);
+        // TODO 관리자 코드
+        Optional<List<String>> optionalUsernamesList = Optional.ofNullable(teamUpdateDto.getUsernamesOfManagers());
+        if (optionalUsernamesList.isPresent()) {
+            List<String> usernamesToBeManager = teamUpdateDto.getUsernamesOfManagers();
+            for (String username : usernamesToBeManager) {
+                User userToBeManager = userRepository.findByUsername(username).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+                MemberEntity memberToBeManager = memberRepository.findByTeamAndUser(team, userToBeManager).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+                memberToBeManager.setRole("Manager");
+                memberRepository.save(memberToBeManager);
+            }
         }
-
     }
 
     public void deleteTeam(Long userId, Long teamId) {
