@@ -22,7 +22,7 @@ public class TeamController {
     private final TeamService teamService;
 //    private final RedissonLockTeamFacade redissonLockStockFacade;
     @GetMapping("/search")
-    public List<TeamOverviewDto> searchTeam(@RequestParam("keyword") String keyword) {
+    public List<TeamOverviewDto> searchTeam(@RequestParam(value = "keyword", defaultValue = "") String keyword) {
         return teamService.searchTeam(keyword);
     }
 

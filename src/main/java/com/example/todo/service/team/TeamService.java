@@ -162,8 +162,8 @@ public class TeamService {
         List<TeamOverviewDto> teamOverviewDtoList = new ArrayList<>();
         for (TeamEntity teamEntity: teamEntityList) {
             TeamOverviewDto teamOverviewDto = TeamOverviewDto.fromEntity(teamEntity);
-            MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(teamEntity, "Manager");
-            teamOverviewDto.setTeamManagerName(managerMember.getUser().getUsername());
+            List<MemberEntity> managerMembers = memberRepository.findMemberEntitiesByTeamAndRole(teamEntity, "Manager");
+            teamOverviewDto.setNumberOfManagers(managerMembers.size());
             teamOverviewDtoList.add(teamOverviewDto);
         }
         return teamOverviewDtoList;

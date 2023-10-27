@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
 public class TeamOverviewDto {
     private Long id;
     private String teamName;
-    private String teamManagerName;
+    private int numberOfManagers;
     private String teamDesc;
 
     public static TeamOverviewDto fromEntity(TeamEntity teamEntity) {
