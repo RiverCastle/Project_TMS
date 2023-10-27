@@ -9,11 +9,13 @@ import com.example.todo.domain.repository.SubscriptionRepository;
 import com.example.todo.domain.repository.UsersSubscriptionRepository;
 import com.example.todo.domain.repository.user.UserRepository;
 import com.example.todo.dto.user.request.UserJoinRequestDto;
+import com.example.todo.dto.user.request.UserLoginRequestDto;
 import com.example.todo.dto.user.request.UserUpdateRequestDto;
 import com.example.todo.dto.user.response.UserJoinResponseDto;
 import com.example.todo.dto.user.response.UserUpdateResponseDto;
 import com.example.todo.exception.ErrorCode;
 import com.example.todo.exception.TodoAppException;
+import com.example.todo.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,14 +33,15 @@ import static com.example.todo.exception.ErrorCode.ALREADY_USER_USERNAME;
 @Transactional(readOnly = true)
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
     private final SubscriptionRepository subscriptionRepository;
     private final UsersSubscriptionRepository usersSubscriptionRepository;
 
     @Transactional
     public UserJoinResponseDto createUser(final UserJoinRequestDto joinDto) {
+        passwordCheck(joinDto);
         validateDuplicateUsername(joinDto.getUsername());
         User user = joinDto.toEntity(passwordEncoder.encode(joinDto.getPassword()));
         return new UserJoinResponseDto(userRepository.save(user));
@@ -53,51 +56,6 @@ public class UserService {
         return new UserUpdateResponseDto(user);
     }
 
-//    @Transactional
-//    public void createUserData() {
-//        for (int i = 1; i <= 10000; i++) {
-//            UserJoinRequestDto joinDto = UserJoinRequestDto.builder()
-//                    .password("1234")
-//                    .username("user" + i)
-//                    .phone("010")
-//                    .build();
-//            User user = joinDto.toEntity(passwordEncoder.encode(joinDto.getPassword()));
-//            userRepository.save(user);
-//        }
-//    }
-//    private String generateMerchantUid(){
-//        Instant instant = Instant.now();
-//        Long timestamp = instant.toEpochMilli();
-//        return "order_" + timestamp;
-//    }
-//
-//    @Transactional
-//    public void userSubscription() {
-//        SubscriptionEntity subscription = subscriptionRepository.findById(1L)
-//                .orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_SUBSCRIPTION));
-//
-//        List<User> all = userRepository.findAll();
-//        System.out.println("all.size() = " + all.size());
-//        for (int i = 1; i <= 10000; i++) {
-//            int days = 30;
-//            if (i <= 5000) {
-//                days = 30;
-//            } else {
-//                days = 7;
-//            }
-//            UsersSubscriptionEntity usersSubscription = UsersSubscriptionEntity.builder()
-//                    .users(all.get(i))
-//                    .subscription(subscription)
-//                    .startDate(LocalDate.now())
-//                    .endDate(LocalDate.now().plusDays(days))
-//                    .subscriptionStatus(SubscriptionStatus.ACTIVE)
-//                    .merchantUid(generateMerchantUid())
-//                    .subscriptionPrice(subscription.getPrice())
-//                    .build();
-//
-//            usersSubscriptionRepository.save(usersSubscription);
-//        }
-//    }
 
     @Transactional
     public void createAdminUser(){
@@ -116,5 +74,15 @@ public class UserService {
                 .ifPresent(user -> {
                     throw new TodoAppException(ALREADY_USER_USERNAME, ALREADY_USER_USERNAME.getMessage());
                 });
+    }
+    private void passwordCheck(UserJoinRequestDto userJoinRequestDto) {
+        if (!userJoinRequestDto.getPassword().equals(userJoinRequestDto.getPasswordCheck())) throw new TodoAppException(ErrorCode.PASSWORD_PASSWORDCHECK_MISMATCH);
+    }
+
+    public String login(UserLoginRequestDto loginRequestDto) {
+        User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            return tokenProvider.createAccessToken(user);
+        } else throw new TodoAppException(ErrorCode.LOGIN_FAILS);
     }
 }

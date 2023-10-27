@@ -13,20 +13,21 @@ public class UserJoinRequestDto {
 
     private String username;
     private String password;
-    private String phone;
+    private String passwordCheck;
+
 
     @Builder
-    public UserJoinRequestDto(final String username, final String password, final String phone) {
+    public UserJoinRequestDto(final String username, final String password, final String passwordCheck) {
         this.username = username;
         this.password = password;
-        this.phone = phone;
+        this.passwordCheck = passwordCheck;
+
     }
 
     public User toEntity(String password) {
         return User.builder()
                 .username(username)
                 .password(password)
-                .phone(phone)
                 .role(Role.USER)
                 .build();
     }

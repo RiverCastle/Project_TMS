@@ -16,17 +16,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ViewController {
     private final TeamController teamController;
     @GetMapping("/main")
-    public String main(Model model, Authentication authentication) {
+    public String main(Model model) {
         model.addAttribute("teamOverviewDtoList", teamController.searchTeam(""));
-        System.out.println("메인으로 이동");
-        if (authentication != null) System.out.println(authentication.getName() + "님 안녕하세요~!");
-        else System.out.println("미인증-_-");
         return "main";
     }
 
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @GetMapping("/sign-up")
+    public String signUp() {
+        return "sign-up";
     }
 
     @GetMapping("/team/{teamId}")
