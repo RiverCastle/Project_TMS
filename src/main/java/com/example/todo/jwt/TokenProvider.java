@@ -50,7 +50,6 @@ public class TokenProvider {
     }
 
     public boolean validToken(String token) {
-        log.info("method: validToken " + token);
         try {
             jwtParser.parseClaimsJws(token);
             return true;
