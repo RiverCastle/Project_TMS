@@ -6,9 +6,9 @@
 </head>
 <body>
 <h1 id="team_info">Team Info</h1><br>
-<h2>TODO tasks</h2><br>
-<h2>My Tasks</h2><br>
-<h2>All tasks</h2><br>
+<h2>미완료 업무</h2><br>
+<h2 id="my_tasks_in_team">내 업무</h2><br>
+<h2 id="all_tasks_in_team">모든 업무</h2><br>
 
 <script>
     // URL에서 teamId를 추출하는 함수
@@ -21,12 +21,9 @@
             throw new Error("Team ID not found in URL");
         }
     }
-
-    // 현재 페이지 URL에서 teamId 추출
     const teamId = getTeamIdFromURL();
-    console.log(teamId);
 
-    // /api/team/{teamId}
+    // /api/team/{teamId} 팀 정보 조회
     let Jwt = localStorage.getItem("JWT");
     fetch('/api/team/' + teamId, {
         headers: {
@@ -49,7 +46,7 @@
             team_info.appendChild(team_limit);
         })
 
-    // /api/team/{teamId}/tasks
+    // /api/team/{teamId}/tasks 팀 업무 전체 조회
     fetch('/api/team/' + teamId + '/tasks', {
         headers: {
             "Authorization": "Bearer " + Jwt
@@ -59,18 +56,38 @@
         .then(response => response.json())
         .then(data => {
             // All tasks
-            const allTasksSection = document.createElement('div');
+            const allTasksSection = document.getElementById('all_tasks_in_team');
 
-            // Iterate over the list of tasks and create elements for each task
             data.forEach(task => {
                 const taskElement = document.createElement('h3');
                 taskElement.textContent = task.taskName; // Updated variable name
                 allTasksSection.appendChild(taskElement);
             });
 
-            // Append the 'All tasks' section to the body
             document.body.appendChild(allTasksSection);
         });
+
+    // /api/team/{teamId}/tasks/myTasks 팀 내 내 업무 조회
+    fetch('/api/team/' + teamId + '/tasks/myTasks',
+        {
+            headers: {
+                "Authorization" : "Bearer "+ Jwt
+            },
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(data => {
+            const myTasks = document.getElementById('my_tasks_in_team');
+            const myTasks_all = document.createElement('div');
+            data.forEach(task => {
+                const taskElement = document.createElement('p');
+                taskElement.textContent = task.taskName;
+                myTasks_all.appendChild(taskElement);
+            });
+            myTasks.appendChild(myTasks_all);
+        })
+
+    // 나의 미완료 업무
 
 </script>
 </body>
