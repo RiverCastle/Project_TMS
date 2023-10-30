@@ -225,13 +225,13 @@ public class TaskApiService {
 
     // 팀내 내 업무 조회
     public List<TaskApiDto> getMyTasksInATeam(Long userId, Long teamId) {
-        List<TaskApiDto> myTasksInATeam = new ArrayList<>();
-        getTeamById(teamId);
-        if (!isMemberOfTeam(userId, teamId)) throw new TodoAppException(ErrorCode.NOT_FOUND_MEMBER);
-        List<TaskApiEntity> taskApiEntityList = taskApiRepository.findAllByTeamIdAndMember_UserId(teamId, userId);
-        for (TaskApiEntity taskApiEntity : taskApiEntityList)
-            if (!taskApiEntity.getStatus().equals("완료")) myTasksInATeam.add(TaskApiDto.fromEntity(taskApiEntity));
-        return myTasksInATeam;
+        List<TaskApiDto> taskDtoList = new ArrayList<>();
+        User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
+        MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+        List<TaskApiEntity> tasks = taskApiRepository.findAllByMember(member);
+        for (TaskApiEntity task : tasks) taskDtoList.add(TaskApiDto.fromEntity(task));
+        return taskDtoList;
 
     }
 
