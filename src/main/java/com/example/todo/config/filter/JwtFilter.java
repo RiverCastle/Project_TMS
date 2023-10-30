@@ -24,12 +24,21 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+        log.info("(ofilter) authHeader " + authHeader);
+
+        // Header의 Authorization 값이 비어있으면 => Jwt Token을 전송하지 않음 => 로그인 하지 않음
+        if(authHeader == null) {
             filterChain.doFilter(request, response);
             return;
-        }
+        } else log.info("Header의 Authorization 값이 null X");
+
+        // Header의 Authorization 값이 'Bearer '로 시작하지 않으면 => 잘못된 토큰
+        if(!authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        } else log.info("Header의 Authorization 값이 'Bearer '로 시작O");
 
         String accessToken = authHeader.split(" ")[1];
         if (!tokenProvider.validToken(accessToken)) {
@@ -40,9 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(tokenProvider.getAuthentication(accessToken));
         SecurityContextHolder.setContext(context);
-
+//        response.addHeader("Authorization", "Bearer " + accessToken);
 
         filterChain.doFilter(request, response);
-
     }
 }

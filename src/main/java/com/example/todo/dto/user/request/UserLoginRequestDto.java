@@ -1,12 +1,9 @@
 package com.example.todo.dto.user.request;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Data
 public class UserLoginRequestDto {
 
     private String username;

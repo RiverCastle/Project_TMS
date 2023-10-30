@@ -50,11 +50,12 @@ public class TokenProvider {
     }
 
     public boolean validToken(String token) {
+        log.info("method: validToken " + token);
         try {
             jwtParser.parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
-            log.error("invalidToken", e);
+            log.error("ValidToken but it is Expired", e);
             return false;
         } catch (Exception e) {
             log.error("invalidToken", e);

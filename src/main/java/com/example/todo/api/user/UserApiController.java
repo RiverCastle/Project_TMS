@@ -18,12 +18,14 @@ import com.example.todo.service.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 @RestController
@@ -54,6 +56,7 @@ public class UserApiController {
     @GetMapping("/myTasks")
     public Map<TeamOverviewDto, List<TaskApiDto>> getMyTasks(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
+        log.info("내 업무 조회 api");
         return taskApiService.getMyTasks(userId);
     }
 
