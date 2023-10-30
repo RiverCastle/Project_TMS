@@ -36,18 +36,20 @@ public class SecurityConfig {
                         .hasRole("ADMIN")
                         .anyRequest()
                         .permitAll())
+
                 .oauth2Login(oauth2Login -> oauth2Login
                         .loginPage("/views/login")
                         .successHandler(oAuth2SuccessHandler)
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserServiceImpl))
                 )
+
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .addFilterBefore(
                         jwtFilter,
-                        AuthorizationFilter.class
-                );
+                        AuthorizationFilter.class);
 
         return http.build();
     }
