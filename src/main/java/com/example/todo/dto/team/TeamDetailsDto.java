@@ -15,9 +15,9 @@ public class TeamDetailsDto {
     private String desc;
     private List<String> members;
     private Integer memberLimit;
-    private List<TaskApiDto> notDoneTasks;
-    private List<TaskApiDto> doneTasks;
-    private List<TaskApiDto> allTasks;
+//    private List<TaskApiDto> notDoneTasks;
+//    private List<TaskApiDto> doneTasks;
+//    private List<TaskApiDto> allTasks;
 
     public static TeamDetailsDto fromEntity(TeamEntity teamEntity) {
         TeamDetailsDto teamDetailsDto = new TeamDetailsDto();

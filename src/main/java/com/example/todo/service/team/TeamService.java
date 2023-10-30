@@ -197,13 +197,14 @@ public class TeamService {
         for (MemberEntity managerMember : managerMembers) managerNames.add(managerMember.getUser().getUsername());
         teamDetailsDto.setManagerNames(managerNames);
 
-        //TODO 분리하기
-        List<TaskApiDto> allTasksDtoList = taskApiService.readTasksAll(userId, teamId);
-        for (TaskApiDto taskApiDto : allTasksDtoList) {
-            teamDetailsDto.getAllTasks().add(taskApiDto);
-            if (taskApiDto.getStatus().equals("DONE")) teamDetailsDto.getDoneTasks().add(taskApiDto);
-            else teamDetailsDto.getNotDoneTasks().add(taskApiDto);
-        }
+//        //TODO 분리하기
+//        List<TaskApiDto> allTasksDtoList = taskApiService.readTasksAll(userId, teamId);
+//        List<TaskApiDto> temp = new ArrayList<>();
+//        for (TaskApiDto taskApiDto : allTasksDtoList) {
+//            temp.add(taskApiDto);
+//            if (taskApiDto.getStatus().equals("DONE")) teamDetailsDto.getDoneTasks().add(taskApiDto);
+//            else teamDetailsDto.getNotDoneTasks().add(taskApiDto);
+//        }
 
         return teamDetailsDto;
     }
