@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Tasks</title>
+</head>
+<body>
+My Tasks My Tasks My Tasks My TasksMy Tasks My Tasks
+<script>
+    let Jwt = localStorage.getItem("JWT");
+    fetch('/api/users/myTasks', {
+        headers: {
+            "Authorization": "Bearer " + Jwt
+        },
+        method: "GET"
+    })
+    .then(myTasks => {
+        console.log(myTasks);
+    })
+</script>
+</body>
+</html>
