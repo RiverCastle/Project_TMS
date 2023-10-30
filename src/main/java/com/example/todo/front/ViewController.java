@@ -43,9 +43,7 @@ public class ViewController {
     }
 
     @GetMapping("/team/{teamId}")
-    public String teamPage(Model model,
-                           @PathVariable("teamId") Long teamId,
-                           Authentication authentication) {
+    public String teamPage(@PathVariable("teamId") Long teamId) {
         log.info("팀 조회 페이지");
         return "team-page";
     }

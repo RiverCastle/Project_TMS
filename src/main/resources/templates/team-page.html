@@ -1,43 +1,77 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${teamDetailsDto.name} + ' 페이지'" ></title>
+    <title>Title</title>
 </head>
 <body>
-<h1 th:text="${teamDetailsDto.name}">팀 이름</h1>
-<p th:text="${teamDetailsDto.managerName}">팀 매니저</p>
-<p th:text="${teamDetailsDto.desc}">팀 설명</p>
+<h1 id="team_info">Team Info</h1><br>
+<h2>TODO tasks</h2><br>
+<h2>My Tasks</h2><br>
+<h2>All tasks</h2><br>
 
-<h2>팀 멤버</h2>
-<ul>
-    <li th:each="member : ${teamDetailsDto.members}" th:text="${member}"></li>
-</ul>
+<script>
+    // URL에서 teamId를 추출하는 함수
+    function getTeamIdFromURL() {
+        const url = window.location.href;
+        const match = url.match(/\/views\/team\/(\d+)/); // 정규식을 사용하여 추출
+        if (match) {
+            return match[1];
+        } else {
+            throw new Error("Team ID not found in URL");
+        }
+    }
 
-<p th:text="'최대 인원: ' + ${teamDetailsDto.memberLimit}"></p>
+    // 현재 페이지 URL에서 teamId 추출
+    const teamId = getTeamIdFromURL();
+    console.log(teamId);
 
-<h2>미완료 작업</h2>
-<ul>
-    <li th:each="task : ${teamDetailsDto.notDoneTasks}">
-        <p th:text="${task.taskName}">작업 이름</p>
-        <p th:text="${task.taskDescription}">작업 설명</p>
-    </li>
-</ul>
+    // /api/team/{teamId}
+    let Jwt = localStorage.getItem("JWT");
+    fetch('/api/team/' + teamId, {
+        headers: {
+            "Authorization": "Bearer " + Jwt
+        },
+        method: "GET"
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Team Info
+            const team_info = document.getElementById('team_info');
+            const team_name = document.createElement('h2');
+            team_name.textContent = data.name;
+            team_info.appendChild(team_name);
+            const team_desc = document.createElement('p');
+            team_desc.textContent = data.desc;
+            team_info.appendChild(team_desc);
+            const team_limit = document.createElement('p');
+            team_limit.textContent = data.memberLimit;
+            team_info.appendChild(team_limit);
+        })
 
-<h2>완료된 작업</h2>
-<ul>
-    <li th:each="task : ${teamDetailsDto.doneTasks}">
-        <p th:text="${task.taskName}">작업 이름</p>
-        <p th:text="${task.taskDescription}">작업 설명</p>
-    </li>
-</ul>
+    // /api/team/{teamId}/tasks
+    fetch('/api/team/' + teamId + '/tasks', {
+        headers: {
+            "Authorization": "Bearer " + Jwt
+        },
+        method: "GET"
+    })
+        .then(response => response.json())
+        .then(data => {
+            // All tasks
+            const allTasksSection = document.createElement('div');
 
-<h2>전체 작업</h2>
-<ul>
-    <li th:each="task : ${teamDetailsDto.allTasks}">
-        <p th:text="${task.taskName}">작업 이름</p>
-        <p th:text="${task.taskDescription}">작업 설명</p>
-    </li>
-</ul>
+            // Iterate over the list of tasks and create elements for each task
+            data.forEach(task => {
+                const taskElement = document.createElement('h3');
+                taskElement.textContent = task.taskName; // Updated variable name
+                allTasksSection.appendChild(taskElement);
+            });
+
+            // Append the 'All tasks' section to the body
+            document.body.appendChild(allTasksSection);
+        });
+
+</script>
 </body>
 </html>
