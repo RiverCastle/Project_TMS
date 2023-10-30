@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 public class TeamDetailsDto {
     private String name;
-    private String managerName;
+    private List<String> managerNames;
     private String desc;
     private List<String> members;
     private Integer memberLimit;

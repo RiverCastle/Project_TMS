@@ -186,13 +186,18 @@ public class TeamService {
     }
 
     public TeamDetailsDto getTeamDetails(Long userId, Long teamId) {
+        log.info(userId + "  " + teamId);
         User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
 
         TeamDetailsDto teamDetailsDto = TeamDetailsDto.fromEntity(team);
-        MemberEntity managerMember = memberRepository.findMemberEntityByTeamAndAndRole(team, "Manager");
-        teamDetailsDto.setManagerName(managerMember.getUser().getUsername());
+        List<MemberEntity> managerMembers = memberRepository.findMemberEntitiesByTeamAndRole(team, "Manager");
+        List<String> managerNames = new ArrayList<>();
+        for (MemberEntity managerMember : managerMembers) managerNames.add(managerMember.getUser().getUsername());
+        teamDetailsDto.setManagerNames(managerNames);
+
+        //TODO 분리하기
         List<TaskApiDto> allTasksDtoList = taskApiService.readTasksAll(userId, teamId);
         for (TaskApiDto taskApiDto : allTasksDtoList) {
             teamDetailsDto.getAllTasks().add(taskApiDto);

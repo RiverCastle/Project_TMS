@@ -142,7 +142,7 @@ public class TaskApiService {
         //조직이 존재하는지 확인
         getTeamById(teamId);
         // 멤버 여부 확인
-        if (isMemberOfTeam(userId, teamId)) throw new TodoAppException(ErrorCode.NOT_MATCH_MEMBERID);
+        if (!isMemberOfTeam(userId, teamId)) throw new TodoAppException(ErrorCode.NOT_MATCH_MEMBERID);
         List<TaskApiEntity> taskApiEntities = taskApiRepository.findAllByTeamId(teamId);
         List<TaskApiDto> taskApiDtoList = new ArrayList<>();
         for (TaskApiEntity taskApiEntity : taskApiEntities) taskApiDtoList.add(TaskApiDto.fromEntity(taskApiEntity));
