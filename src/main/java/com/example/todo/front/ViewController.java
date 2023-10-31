@@ -47,4 +47,10 @@ public class ViewController {
         log.info("팀 조회 페이지");
         return "team-page";
     }
+
+    @GetMapping("/team/{teamId}/tasks/{taskId}")
+    public String taskPage(@PathVariable("teamId") Long teamId,
+                           @PathVariable("taskId") Long taskId) {
+        return "task-page";
+    }
 }

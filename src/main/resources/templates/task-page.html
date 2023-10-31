@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Page</title>
+</head>
+<body>
+<script>
+    // URL에서 teamId를 추출하는 함수
+    const url = window.location.href;
+    let auth = 'Bearer ' + localStorage.getItem("JWT");
+
+    function getTeamIdFromURL() {
+        const match = url.match(/\/views\/team\/(\d+)\/tasks\/(\d+)/); // \/views\/team\/(\d+)정규식을 사용하여 추출
+        if (match) {
+            return match[1];
+        } else {
+            throw new Error("Team ID not found in URL");
+        }
+    }
+
+    // URL에서 taskId를 추출하는 함수
+    function getTaskIdFromURL() {
+        const match = url.match(/\/views\/team\/(\d+)\/tasks\/(\d+)/); // \/views\/team\/(\d+)정규식을 사용하여 추출
+        if (match) {
+            return match[2];
+        } else {
+            throw new Error("Task ID not found in URL");
+        }
+    }
+
+    const teamId = getTeamIdFromURL();
+    const taskId = getTaskIdFromURL();
+    // /api/team/{teamId}/tasks/{taskId} 업무 상세 조회
+    fetch('/api/team/' + teamId + '/tasks/' + taskId, {
+        headers: {
+            "Authorization": auth
+        },
+        method: "GET"
+    })
+        .then(response => response.json())
+        .then(data => {
+            const task_name = data.taskName;
+            const task_desc = data.taskDesc;
+            const task_start_at = data.startDate;
+            const task_end_at = data.dueDate;
+            const task_worker = data.worker;
+            const task_status = data.status;
+
+            const task_info = document.createElement('h2');
+            task_info.textContent = '업무 상세 정보';
+
+            const task_name_tag = document.createElement('p');
+            task_name_tag.textContent = "업무명 : " + task_name;
+            task_info.appendChild(task_name_tag);
+
+            const task_desc_tag = document.createElement('p');
+            task_desc_tag.textContent = "업무 내용 : " + task_desc;
+            task_info.appendChild(task_desc_tag);
+
+            const task_start_at_tag = document.createElement('p');
+            task_start_at_tag.textContent = "업무 시작일 : " + task_start_at;
+            task_info.appendChild(task_start_at_tag);
+
+            const task_end_at_tag = document.createElement('p');
+            task_end_at_tag.textContent = "업무 마감일 : " + task_end_at;
+            task_info.appendChild(task_end_at_tag);
+
+            const task_worker_tag = document.createElement('p');
+            task_worker_tag.textContent = "업무 담당자 : " + task_worker;
+            task_info.appendChild(task_worker_tag);
+
+            const task_status_tag = document.createElement('p');
+            task_status_tag.textContent = "업무 진행 상태 : " + task_status;
+            task_info.appendChild(task_status_tag);
+
+            document.body.appendChild(task_info);
+        })
+
+    // /api/team/{teamId}/task/{taskId}/comments 업무 댓글 조회
+    fetch('/api/team/' + teamId + '/tasks/' + taskId + '/comments', {
+        headers: {
+            "Authorization" : auth
+        },
+        method: "GET"
+    })
+        .then(response => response.json())
+        .then(data => {
+            const comment_section = document.createElement('h2');
+            comment_section.textContent = '댓글';
+
+            // 여기서 data는 페이지 객체를 나타냅니다.
+
+            // 페이지 데이터에서 TaskCommentReadDto 객체 목록을 가져옵니다.
+            const taskComments = data.content;
+
+            // TaskCommentReadDto 객체들을 반복하여 표시 또는 처리합니다.
+            taskComments.forEach(comment => {
+                // 작성자 이름과 내용을 추출
+                const writerName = comment.writerName;
+                const content = comment.content;
+
+                // 작성자 이름과 내용을 HTML 엘리먼트로 만들어 추가하거나 표시
+                const commentElement = document.createElement('div');
+                commentElement.innerHTML = `<p><strong>${writerName}:</strong> ${content}</p>`;
+
+                // 만약 댓글에 대한 답글도 표시해야 한다면, replies를 처리할 수 있습니다.
+                if (comment.replies) {
+                    comment.replies.forEach(reply => {
+                        const replyElement = document.createElement('div');
+                        replyElement.innerHTML = `<p>└ <strong>${reply.writerName}:</strong> ${reply.reply}</p>`;
+                        // 답글을 댓글 아래에 표시하거나 원하는 위치에 추가
+                        commentElement.appendChild(replyElement);
+                    });
+                }
+
+                // 표시할 요소에 추가하거나 DOM에 직접 추가
+                comment_section.appendChild(commentElement);
+            });
+            document.body.appendChild(comment_section);
+        });
+
+    // console.log(teamId + "    " + taskId);
+
+
+</script>
+</body>
+</html>
