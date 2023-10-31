@@ -17,7 +17,7 @@ public class TaskCommentReadDto {
 
     public static TaskCommentReadDto fromEntity(TaskCommentEntity entity) {
         TaskCommentReadDto taskCommentReadDto = new TaskCommentReadDto();
-        taskCommentReadDto.setWriterName(entity.getWriter().getUsername());
+        taskCommentReadDto.setWriterName(entity.getWriter().getUser().getUsername());
         taskCommentReadDto.setContent(entity.getContent());
 
         List<TaskCommentReplyDto> replyDtos = entity.getReplies().stream()
