@@ -5,10 +5,8 @@
     <title>Title</title>
 </head>
 <body>
-<h1 id="team_info">Team Info</h1><br>
-<h2>미완료 업무</h2><br>
+<h2 id="team_info">Team Info</h2><br>
 <h2 id="my_tasks_in_team">내 업무</h2><br>
-<h2 id="all_tasks_in_team">모든 업무</h2><br>
 
 <script>
     // URL에서 teamId를 추출하는 함수
@@ -21,6 +19,7 @@
             throw new Error("Team ID not found in URL");
         }
     }
+
     const teamId = getTeamIdFromURL();
 
     // /api/team/{teamId} 팀 정보 조회
@@ -56,22 +55,36 @@
         .then(response => response.json())
         .then(data => {
             // All tasks
-            const allTasksSection = document.getElementById('all_tasks_in_team');
+            const allTasksSection = document.createElement('h2');
+            allTasksSection.textContent = "완료된 업무";
+
+            const todoTasksSection = document.createElement('h2');
+            todoTasksSection.textContent = "미완료 업무";
 
             data.forEach(task => {
-                const taskElement = document.createElement('h3');
-                taskElement.textContent = task.taskName; // Updated variable name
-                allTasksSection.appendChild(taskElement);
+                const taskElement = document.createElement('p');
+                taskElement.textContent = task.taskName + "   " + task.status;
+
+                allTasksSection.appendChild(taskElement); // "모든 업무" 섹션에 추가
+                if (task.status !== 'DONE') {
+                    console.log("\"미완료 업무\" 섹션에 추가함??");
+                    todoTasksSection.appendChild(taskElement); // "미완료 업무" 섹션에 추가
+                    console.log("미완료 업무에 섹션 추가 함!")
+                }
             });
 
+            console.log("도큐먼트 바디 실행중?")
+            document.body.appendChild(todoTasksSection);
             document.body.appendChild(allTasksSection);
+            console.log("ㅇㅇ 실행중!!")
         });
+
 
     // /api/team/{teamId}/tasks/myTasks 팀 내 내 업무 조회
     fetch('/api/team/' + teamId + '/tasks/myTasks',
         {
             headers: {
-                "Authorization" : "Bearer "+ Jwt
+                "Authorization": "Bearer " + Jwt
             },
             method: "GET"
         })
