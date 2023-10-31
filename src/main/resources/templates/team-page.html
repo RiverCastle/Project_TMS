@@ -67,16 +67,12 @@
 
                 allTasksSection.appendChild(taskElement); // "모든 업무" 섹션에 추가
                 if (task.status !== 'DONE') {
-                    console.log("\"미완료 업무\" 섹션에 추가함??");
                     todoTasksSection.appendChild(taskElement); // "미완료 업무" 섹션에 추가
-                    console.log("미완료 업무에 섹션 추가 함!")
                 }
             });
 
-            console.log("도큐먼트 바디 실행중?")
             document.body.appendChild(todoTasksSection);
             document.body.appendChild(allTasksSection);
-            console.log("ㅇㅇ 실행중!!")
         });
 
 
@@ -99,9 +95,6 @@
             });
             myTasks.appendChild(myTasks_all);
         })
-
-    // 나의 미완료 업무
-
 </script>
 </body>
 </html>
