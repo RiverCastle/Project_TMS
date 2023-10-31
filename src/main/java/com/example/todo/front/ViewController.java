@@ -4,7 +4,6 @@ package com.example.todo.front;
 import com.example.todo.api.team.TeamController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +26,7 @@ public class ViewController {
     @GetMapping("/myTasks")
     public String myTasks(Model model) {
         log.info("내 업무 조회 페이지");
-        return "myTasks";
+        return "my-tasks";
     }
 
     @GetMapping("/login")

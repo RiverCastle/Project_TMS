@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 작업</title>
+    <style>
+        hr {
+            margin: 20px 0; /* 구분선 위아래의 여백 설정 */
+        }
+    </style>
+
+</head>
+<body>
+<h1>나의 작업</h1>
+<ul id="myTasksList"></ul>
+<script>
+    let Jwt = localStorage.getItem("JWT");
+    fetch('/api/users/myTasks', {
+        headers: {
+            "Authorization": "Bearer " + Jwt
+        },
+        method: "GET"
+    })
+        .then(response => response.json())
+        .then(map_object => {
+            const myTasksList = document.getElementById('myTasksList');
+            myTasksList.innerHTML = ''; // 목록 초기화
+
+            for (const element in map_object) {
+                let startIndex = element.indexOf("teamName=") + 9;
+                let endIndex = element.indexOf(",", startIndex);
+                const team_name = element.substring(startIndex, endIndex);
+
+                startIndex = element.indexOf("id=") + 3;
+                endIndex = element.indexOf(",", startIndex);
+                const team_id = element.substring(startIndex, endIndex);
+
+                const teamHeader = document.createElement('a');
+                teamHeader.textContent = '팀이름 : ' + team_name;
+                teamHeader.setAttribute('href', '/views/team/' + team_id);
+                myTasksList.appendChild(teamHeader);
+                const taskList = document.createElement('ul');
+
+                const tasks = map_object[element];
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('a');
+                    const task_id = task.id;
+                    console.log(task_id);
+                    taskItem.textContent = task.taskName;
+                    taskItem.setAttribute('href', '/views/team/' + team_id + '/tasks/' + task_id);
+                    taskList.appendChild(taskItem);
+                });
+                myTasksList.appendChild(taskList);
+                myTasksList.appendChild(document.createElement('hr'));
+
+            }
+        })
+        .catch(error => {
+            console.error('오류:', error);
+        });
+</script>
+</body>
+</html>
