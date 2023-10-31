@@ -150,8 +150,8 @@ public class TaskApiService {
     }
 
     // 내 전체 업무 조회
-    public Map<String, List<TaskApiDto>> getMyTasks(Long userId) {
-        Map<String, List<TaskApiDto>> myTasks = new HashMap<>();
+    public Map<TeamOverviewDto, List<TaskApiDto>> getMyTasks(Long userId) {
+        Map<TeamOverviewDto, List<TaskApiDto>> myTasks = new HashMap<>();
 
         List<MemberEntity> memberEntities = memberRepository.findAllByUserId(userId);
         for (MemberEntity memberEntity : memberEntities) {
@@ -160,7 +160,7 @@ public class TaskApiService {
             List<TaskApiDto> taskApiDtoList = new ArrayList<>();
             for (TaskApiEntity taskApiEntity : taskApiEntityList)
                 if (!taskApiEntity.getStatus().equals("완료")) taskApiDtoList.add(TaskApiDto.fromEntity(taskApiEntity));
-            myTasks.put(teamEntity.getName(), taskApiDtoList);
+            myTasks.put(TeamOverviewDto.fromEntity(teamEntity), taskApiDtoList);
         }
         return myTasks;
     }

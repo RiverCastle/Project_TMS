@@ -54,7 +54,7 @@ public class UserApiController {
 
     //내 업무 모아보기
     @GetMapping("/myTasks")
-    public Map<String, List<TaskApiDto>> getMyTasks(Authentication authentication) {
+    public Map<TeamOverviewDto, List<TaskApiDto>> getMyTasks(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         log.info("내 업무 조회 api");
         return taskApiService.getMyTasks(userId);
