@@ -6,7 +6,7 @@
 </head>
 <body>
 <h2 id="team_info">Team Info</h2><br>
-<h2 id="my_tasks_in_team">내 업무</h2><br>
+
 
 <script>
     // URL에서 teamId를 추출하는 함수
@@ -54,27 +54,66 @@
     })
         .then(response => response.json())
         .then(data => {
-            // All tasks
-            const allTasksSection = document.createElement('h2');
-            allTasksSection.textContent = "완료된 업무";
+            // 테이블 생성
+            const table = document.createElement('table');
 
-            const todoTasksSection = document.createElement('h2');
-            todoTasksSection.textContent = "미완료 업무";
+            // 미완료 업무와 완료 업무를 나눌 섹션 생성
+            const incompleteSection = document.createElement('section');
+            incompleteSection.innerHTML = "<h2>미완료 업무</h2>";
+
+            const completeSection = document.createElement('section');
+            completeSection.innerHTML = "<h2>완료 업무</h2>";
+
+            // 테이블 헤더 생성
+            const headerRow = document.createElement('tr');
+
+            const taskNameHeader = document.createElement('th');
+            taskNameHeader.textContent = "작업 이름";
+
+            const workerHeader = document.createElement('th');
+            workerHeader.textContent = "작업자";
+
+            const statusHeader = document.createElement('th');
+            statusHeader.textContent = "상태";
+
+            headerRow.appendChild(taskNameHeader);
+            headerRow.appendChild(workerHeader);
+            headerRow.appendChild(statusHeader);
+
+            completeSection.appendChild(headerRow);
+            incompleteSection.appendChild(headerRow.cloneNode(true)); // TODO 회고록에 작성하기
 
             data.forEach(task => {
-                const taskElement = document.createElement('p');
-                taskElement.textContent = task.taskName + "   " + task.status;
+                // 새로운 열(행) 생성
+                const row = document.createElement('tr');
 
-                allTasksSection.appendChild(taskElement); // "모든 업무" 섹션에 추가
-                if (task.status !== 'DONE') {
-                    todoTasksSection.appendChild(taskElement); // "미완료 업무" 섹션에 추가
+                // 각 업무의 정보를 표시할 셀(칸) 생성
+                const taskNameCell = document.createElement('td');
+                taskNameCell.textContent = task.taskName;
+
+                const workerCell = document.createElement('td');
+                workerCell.textContent = task.worker;
+
+                const statusCell = document.createElement('td');
+                statusCell.textContent = task.status;
+
+                // 데이터 셀(칸)을 행에 추가
+                row.appendChild(taskNameCell);
+                row.appendChild(workerCell);
+                row.appendChild(statusCell);
+
+                // 미완료 업무와 완료 업무 섹션에 행 추가
+                if (task.status === 'DONE') {
+                    completeSection.appendChild(row);
+                } else {
+                    incompleteSection.appendChild(row);
                 }
             });
 
-            document.body.appendChild(todoTasksSection);
-            document.body.appendChild(allTasksSection);
+            // 섹션을 본문에 추가
+            document.body.appendChild(incompleteSection);
+            document.body.appendChild(completeSection);
         });
-
 
     // /api/team/{teamId}/tasks/myTasks 팀 내 내 업무 조회
     fetch('/api/team/' + teamId + '/tasks/myTasks',
@@ -86,15 +125,55 @@
         })
         .then(response => response.json())
         .then(data => {
-            const myTasks = document.getElementById('my_tasks_in_team');
-            const myTasks_all = document.createElement('div');
+            const myTasksTable = document.createElement('table');
+            myTasksTable.innerHTML = "<h2>내 업무</h2>";
+
+            // 테이블 헤더 생성
+            const headerRow = document.createElement('tr');
+
+            const taskNameHeader = document.createElement('th');
+            taskNameHeader.textContent = "작업 이름";
+
+            const workerHeader = document.createElement('th');
+            workerHeader.textContent = "작업자";
+
+            const statusHeader = document.createElement('th');
+            statusHeader.textContent = "상태";
+
+            headerRow.appendChild(taskNameHeader);
+            headerRow.appendChild(workerHeader);
+            headerRow.appendChild(statusHeader);
+
+            myTasksTable.appendChild(headerRow);
+
             data.forEach(task => {
-                const taskElement = document.createElement('p');
-                taskElement.textContent = task.taskName;
-                myTasks_all.appendChild(taskElement);
+                // 각 업무에 대한 행 생성
+                const row = document.createElement('tr');
+
+                // 작업 이름을 나타내는 셀(칸) 생성
+                const taskNameCell = document.createElement('td');
+                taskNameCell.textContent = task.taskName;
+
+                // 작업자를 나타내는 셀(칸) 생성
+                const workerCell = document.createElement('td');
+                workerCell.textContent = task.worker;
+
+                // 상태를 나타내는 셀(칸) 생성
+                const statusCell = document.createElement('td');
+                statusCell.textContent = task.status;
+
+                // 데이터 셀(칸)을 행에 추가
+                row.appendChild(taskNameCell);
+                row.appendChild(workerCell);
+                row.appendChild(statusCell);
+
+                // 행을 테이블에 추가
+                myTasksTable.appendChild(row);
             });
-            myTasks.appendChild(myTasks_all);
-        })
+
+            // 테이블을 해당 요소에 추가
+            document.body.appendChild(myTasksTable);
+        });
 </script>
 </body>
 </html>
