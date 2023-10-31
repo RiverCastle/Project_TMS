@@ -15,7 +15,7 @@ public class TaskCommentReplyEntity extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne
-    private User writer;
+    private MemberEntity writer;
     private String reply;
 
     @ManyToOne

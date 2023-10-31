@@ -16,7 +16,7 @@ public class TaskCommentEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    private User writer;
+    private MemberEntity writer;
     private String content;
     @OneToMany(mappedBy = "taskCommentEntity", fetch = FetchType.EAGER)
     private List<TaskCommentReplyEntity> replies;

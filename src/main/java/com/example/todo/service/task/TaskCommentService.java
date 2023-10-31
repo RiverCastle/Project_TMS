@@ -41,8 +41,7 @@ public class TaskCommentService {
 
         TaskCommentEntity taskCommentEntity = new TaskCommentEntity();
 
-        // TODO user대신 member를 넣는 것이 더 명확할 것 같음
-        taskCommentEntity.setWriter(user);
+        taskCommentEntity.setWriter(member);
         taskCommentEntity.setContent(taskCommentCreateDto.getContent());
         taskCommentEntity.setTaskApiEntity(task);
         taskCommentRepository.save(taskCommentEntity);
@@ -95,8 +94,7 @@ public class TaskCommentService {
         //맞다면 진행한다.
         TaskCommentReplyEntity replyEntity = new TaskCommentReplyEntity();
         replyEntity.setTaskCommentEntity(taskComment);
-        // TODO 여기도 member로 바꾸는 것 고려하기
-        replyEntity.setWriter(user);
+        replyEntity.setWriter(member);
         replyEntity.setReply(taskCommentReplyDto.getContent());
         LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -104,7 +102,6 @@ public class TaskCommentService {
 
         // 알림을 받을 사용자의 ID를 가져오기 위해 TaskCommentEntity를 사용하여 작성자의 ID를 가져옴
         Long receiveUserId = taskComment.getWriter().getId();
-        // TODO member로 바꾸면 고려해야함.
         boolean isWoker = userId.equals(task.getWorkerId());
 
         // 답글을 작성한 사용자와 댓글 작성자가 다를 때 알림을 보냄
