@@ -1,6 +1,7 @@
 package com.example.todo.api.task;
 
 import com.example.todo.dto.ResponseDto;
+import com.example.todo.dto.task.TaskCommentReplyCreateDto;
 import com.example.todo.dto.task.TaskCommentCreateDto;
 import com.example.todo.dto.task.TaskCommentReadDto;
 import com.example.todo.dto.task.TaskCommentReplyDto;
@@ -64,9 +65,9 @@ public class TaskCommentApiController {
             @PathVariable("teamId") Long teamId,
             @PathVariable("taskId") Long taskId,
             @PathVariable("commentId") Long commentId,
-            @RequestBody TaskCommentReplyDto taskCommentReplyDto) {
+            @RequestBody TaskCommentReplyCreateDto taskCommentReplyCreateDtoDto) {
         Long userId = Long.parseLong(authentication.getName());
-        taskCommentService.addReply(userId, teamId, taskId, commentId, taskCommentReplyDto);
+        taskCommentService.addReply(userId, teamId, taskId, commentId, taskCommentReplyCreateDtoDto);
 
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage("댓글에 답글을 남겼습니다.");

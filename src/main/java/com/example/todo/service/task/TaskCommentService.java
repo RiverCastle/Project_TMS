@@ -1,5 +1,6 @@
 package com.example.todo.service.task;
 
+import com.example.todo.dto.task.TaskCommentReplyCreateDto;
 import com.example.todo.domain.entity.*;
 import com.example.todo.domain.entity.user.User;
 import com.example.todo.domain.repository.*;
@@ -107,7 +108,7 @@ public class TaskCommentService {
         taskCommentRepository.save(taskCommentEntity);
     }
     //답글 달기
-    public TaskCommentReplyEntity addReply(Long userId, Long teamId, Long taskId, Long commentId, TaskCommentReplyDto taskCommentReplyDto) {
+    public TaskCommentReplyEntity addReply(Long userId, Long teamId, Long taskId, Long commentId, TaskCommentReplyCreateDto taskCommentReplyDto) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저 존재 X");
         User user = optionalUser.get();
@@ -131,7 +132,7 @@ public class TaskCommentService {
         TaskCommentReplyEntity replyEntity = new TaskCommentReplyEntity();
         replyEntity.setTaskCommentEntity(taskCommentEntity);
         replyEntity.setWriter(user);
-        replyEntity.setReply(taskCommentReplyDto.getReply());
+        replyEntity.setReply(taskCommentReplyDto.getContent());
         LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedTime = currentTime.format(formatter);
