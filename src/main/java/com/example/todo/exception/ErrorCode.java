@@ -19,7 +19,7 @@ public enum ErrorCode {
     ALREADY_CANCELED(BAD_REQUEST, "이미 환불된 결제입니다."),
     EXCEED_ALLOWED_TEAM_MEMBERS(BAD_REQUEST, "허용된 최대인원을 초과했습니다."),
     ALREADY_ACTIVE_USERS_SUBSCRIPTION(BAD_REQUEST, "이미 구독중인 구독권이 있습니다."),
-    NOT_ALLOWED_MESSAGE(BAD_REQUEST,"본인에게 메시지를 남길 수 없습니다."),
+    NOT_ALLOWED_MESSAGE(BAD_REQUEST, "본인에게 메시지를 남길 수 없습니다."),
     NOT_AVAILABLE_FUNCTION(BAD_REQUEST, "기능을 사용할 수 없습니다."),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 오류가 발생했습니다."),
@@ -51,7 +51,7 @@ public enum ErrorCode {
     NOT_ALLOWED_EMPTY_TEAM_NAME(NOT_ACCEPTABLE, "팀의 이름을 비울 수는 없습니다."),
     NOT_ALLOWED_EMPTY_JoinCode(NOT_ACCEPTABLE, "팀의 참여코드를 비울 수는 없습니다."),
     NOT_ALLOWED_EMPTY_MANAGER(NOT_ACCEPTABLE, "팀의 관리자가 존재하지 않습니다. 1명 이상의 관리자를 설정해주세요."),
-    LOGIN_FAILS(NOT_FOUND,"아이디 또는 비밀번호를 확인해주세요.");
+    LOGIN_FAILS(NOT_FOUND, "아이디 또는 비밀번호를 확인해주세요."), NOT_FOUND_TASK_COMMENT(NOT_FOUND, "해당 댓글은 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
