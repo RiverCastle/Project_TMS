@@ -36,7 +36,8 @@
 </head>
 <body>
 <h1>팀 상세 페이지</h1>
-<ul id="team_info"></ul><br>
+<ul id="team_info"></ul>
+<br>
 <h1>업무 현황</h1>
 <table id="tasks"></table>
 <script>
@@ -55,9 +56,10 @@
 
     // /api/team/{teamId} 팀 정보 조회
     let Jwt = localStorage.getItem("JWT");
+    const auth = "Bearer " + Jwt;
     fetch('/api/team/' + team_id, {
         headers: {
-            "Authorization": "Bearer " + Jwt
+            "Authorization": auth
         },
         method: "GET"
     })
@@ -65,16 +67,79 @@
         .then(data => {
             // Team Info
             const team_info = document.getElementById('team_info');
+
+            // 팀 이름
             const team_name = document.createElement('h2');
             team_name.textContent = '팀이름 : ' + data.name;
             team_info.appendChild(team_name);
 
+            // 수정 버튼
+            const team_nameEditButton = document.createElement('button');
+            team_nameEditButton.textContent = '수정';
+            team_nameEditButton.addEventListener('click', () => {
+                const newName = prompt('새로운 팀 이름을 입력하세요:', data.name);
+                if (newName !== null) {
+                    console.log('팀 이름을 ' + newName + '으로 수정하기!')
+                    // @PutMapping("/api/team/{teamId}")
+                    fetch('/api/team/' + team_id, {
+                        headers: {
+                            "Authorization": auth,
+                            'Content-Type': 'application/json'
+                        },
+                        method: "PUT",
+                        body: JSON.stringify({
+                            "name": newName
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(responseDto => {
+                            alert(responseDto.message);
+                            location.reload();
+                        })
+                        .catch(error => {
+                            alert(error.message);
+                        })
+                }
+            });
+
+            team_info.appendChild(team_nameEditButton);
+
+            // 팀 설명
             const team_desc = document.createElement('p');
             team_desc.textContent = '팀설명 : ' + data.desc;
             team_info.appendChild(team_desc);
 
-            // TODO 현재인원 추가하기
+            // 수정 버튼
+            const team_descEditButton = document.createElement('button');
+            team_descEditButton.textContent = '수정';
+            team_descEditButton.addEventListener('click', () => {
+                const newDesc = prompt('새로운 팀 설명을 입력하세요:', data.desc);
+                if (newDesc !== null) {
+                    console.log('팀 설명을 ' + newDesc + '으로 수정하기!')
+                    // @PutMapping("/api/team/{teamId}")
+                    fetch('/api/team/' + team_id, {
+                        headers: {
+                            "Authorization": auth,
+                            'Content-Type': 'application/json'
+                        },
+                        method: "PUT",
+                        body: JSON.stringify({
+                            "description": newDesc
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(responseDto => {
+                            alert(responseDto.message);
+                            location.reload();
+                        })
+                        .catch(error => {
+                            alert(error.message);
+                        })
+                }
+            });
+            team_info.appendChild(team_descEditButton);
 
+            // 팀 최대인원 항목
             const team_limit = document.createElement('p');
             team_limit.textContent = '팀 최대인원 : ' + data.memberLimit;
             team_info.appendChild(team_limit);
@@ -83,7 +148,7 @@
     // /api/team/{teamId}/tasks 팀 업무 전체 조회
     fetch('/api/team/' + team_id + '/tasks', {
         headers: {
-            "Authorization": "Bearer " + Jwt
+            "Authorization": auth
         },
         method: "GET"
     })
@@ -160,7 +225,7 @@
     fetch('/api/team/' + team_id + '/tasks/myTasks',
         {
             headers: {
-                "Authorization": "Bearer " + Jwt
+                "Authorization": auth
             },
             method: "GET"
         })
