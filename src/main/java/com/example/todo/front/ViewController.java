@@ -16,11 +16,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class ViewController {
     private final TeamController teamController;
+    @GetMapping("")
+    public String index() {
+        return "index";
+    }
+
     @GetMapping("/main")
-    public String main(Model model) {
-        model.addAttribute("teamOverviewDtoList", teamController.searchTeam(""));
-        log.info("메인페이지");
+    public String main() {
         return "main";
+    }
+
+    @GetMapping("/team")
+    public String team() {
+        return "team-list-page";
     }
 
     @GetMapping("/myTasks")
@@ -44,7 +52,7 @@ public class ViewController {
     @GetMapping("/team/{teamId}")
     public String teamPage(@PathVariable("teamId") Long teamId) {
         log.info("팀 조회 페이지");
-        return "team-page";
+        return "team-details";
     }
 
     @GetMapping("/team/{teamId}/tasks/{taskId}")
