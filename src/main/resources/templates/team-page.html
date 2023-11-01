@@ -52,12 +52,12 @@
         }
     }
 
-    const team_id = getTeamIdFromURL();
+    const teamId = getTeamIdFromURL();
 
     // /api/team/{teamId} 팀 정보 조회
     let Jwt = localStorage.getItem("JWT");
     const auth = "Bearer " + Jwt;
-    fetch('/api/team/' + team_id, {
+    fetch('/api/team/' + teamId, {
         headers: {
             "Authorization": auth
         },
@@ -79,9 +79,8 @@
             team_nameEditButton.addEventListener('click', () => {
                 const newName = prompt('새로운 팀 이름을 입력하세요:', data.name);
                 if (newName !== null) {
-                    console.log('팀 이름을 ' + newName + '으로 수정하기!')
                     // @PutMapping("/api/team/{teamId}")
-                    fetch('/api/team/' + team_id, {
+                    fetch('/api/team/' + teamId, {
                         headers: {
                             "Authorization": auth,
                             'Content-Type': 'application/json'
@@ -115,9 +114,8 @@
             team_descEditButton.addEventListener('click', () => {
                 const newDesc = prompt('새로운 팀 설명을 입력하세요:', data.desc);
                 if (newDesc !== null) {
-                    console.log('팀 설명을 ' + newDesc + '으로 수정하기!')
                     // @PutMapping("/api/team/{teamId}")
-                    fetch('/api/team/' + team_id, {
+                    fetch('/api/team/' + teamId, {
                         headers: {
                             "Authorization": auth,
                             'Content-Type': 'application/json'
@@ -146,7 +144,7 @@
         })
 
     // /api/team/{teamId}/tasks 팀 업무 전체 조회
-    fetch('/api/team/' + team_id + '/tasks', {
+    fetch('/api/team/' + teamId + '/tasks', {
         headers: {
             "Authorization": auth
         },
@@ -185,14 +183,12 @@
 
             data.forEach(task => {
                 const task_id = task.id;
-                console.log(task_id);
-                console.log(task);
                 // 새로운 열(행) 생성
                 const row = document.createElement('tr');
 
                 // 각 업무의 정보를 표시할 셀(칸) 생성
                 const taskNameCell = document.createElement('a');
-                taskNameCell.href = '/views/team/' + team_id + '/tasks/' + task_id;
+                taskNameCell.href = '/views/team/' + teamId + '/tasks/' + task_id;
                 taskNameCell.textContent = task.taskName;
 
                 const workerCell = document.createElement('td');
@@ -222,7 +218,7 @@
         });
 
     // /api/team/{teamId}/tasks/myTasks 팀 내 내 업무 조회
-    fetch('/api/team/' + team_id + '/tasks/myTasks',
+    fetch('/api/team/' + teamId + '/tasks/myTasks',
         {
             headers: {
                 "Authorization": auth
@@ -262,7 +258,7 @@
                 const row = document.createElement('tr');
 
                 const taskNameCell = document.createElement('a');
-                taskNameCell.href = '/views/team/' + team_id + '/tasks/' + task_id;
+                taskNameCell.href = '/views/team/' + teamId + '/tasks/' + task_id;
                 taskNameCell.textContent = task.taskName;
 
                 // 작업자를 나타내는 셀(칸) 생성
