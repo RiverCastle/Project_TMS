@@ -51,7 +51,7 @@ public enum ErrorCode {
     NOT_ALLOWED_EMPTY_TEAM_NAME(NOT_ACCEPTABLE, "팀의 이름을 비울 수는 없습니다."),
     NOT_ALLOWED_EMPTY_JoinCode(NOT_ACCEPTABLE, "팀의 참여코드를 비울 수는 없습니다."),
     NOT_ALLOWED_EMPTY_MANAGER(NOT_ACCEPTABLE, "팀의 관리자가 존재하지 않습니다. 1명 이상의 관리자를 설정해주세요."),
-    LOGIN_FAILS(NOT_FOUND, "아이디 또는 비밀번호를 확인해주세요."), NOT_FOUND_TASK_COMMENT(NOT_FOUND, "해당 댓글은 존재하지 않습니다.");
+    LOGIN_FAILS(NOT_FOUND, "아이디 또는 비밀번호를 확인해주세요."), NOT_FOUND_TASK_COMMENT(NOT_FOUND, "해당 댓글은 존재하지 않습니다."), NOT_ALLOWED_EMPTY_TASK_NAME(NOT_ACCEPTABLE, "업무명을 비울 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -156,7 +156,6 @@ public class TeamService {
         teamReposiotry.save(team);
     }
 
-
     public List<TeamOverviewDto> searchTeam(String keyword) {
         List<TeamEntity> teamEntityList = teamReposiotry.findAllByNameContainingAndDeletedAtIsNullAndBelongsToIdIsNull(keyword);
         List<TeamOverviewDto> teamOverviewDtoList = new ArrayList<>();

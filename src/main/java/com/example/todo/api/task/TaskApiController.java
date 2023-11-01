@@ -5,6 +5,7 @@ import com.example.todo.dto.ResponseDto;
 import com.example.todo.dto.task.TaskAndTeamDto;
 import com.example.todo.dto.task.TaskApiDto;
 import com.example.todo.dto.task.TaskCreateDto;
+import com.example.todo.dto.task.TaskUpdateDto;
 import com.example.todo.dto.team.TeamOverviewDto;
 import com.example.todo.service.task.TaskApiService;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +63,7 @@ public class TaskApiController {
     public ResponseDto update(
             @PathVariable("teamId") Long teamId,
             @PathVariable("taskId") Long taskId,
-            @RequestBody TaskApiDto taskApiDto,
+            @RequestBody TaskUpdateDto taskApiDto,
             Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return service.updateTask(userId, teamId, taskId, taskApiDto);

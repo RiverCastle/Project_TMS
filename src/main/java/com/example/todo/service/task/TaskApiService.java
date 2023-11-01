@@ -17,6 +17,7 @@ import com.example.todo.dto.ResponseDto;
 import com.example.todo.dto.task.TaskAndTeamDto;
 import com.example.todo.dto.task.TaskApiDto;
 import com.example.todo.dto.task.TaskCreateDto;
+import com.example.todo.dto.task.TaskUpdateDto;
 import com.example.todo.dto.team.TeamOverviewDto;
 import com.example.todo.exception.ErrorCode;
 import com.example.todo.exception.TodoAppException;
@@ -166,40 +167,58 @@ public class TaskApiService {
     }
 
     //업무 수정
-    public ResponseDto updateTask(Long userId, Long teamId, Long taskId, TaskApiDto taskApiDto) {
+    public ResponseDto updateTask(Long userId, Long teamId, Long taskId, TaskUpdateDto taskUpdateDto) {
         TeamEntity teamEntity = getTeamById(teamId);
         //기능을 사용할 수 있는지 확인
         isAvailableFunction(teamEntity);
-        TaskApiEntity taskApiEntity = getTaskById(taskId);
+        TaskApiEntity taskEntity = getTaskById(taskId);
         //대상 업무가 대상 팀의 업무가 맞는지
-        if (!teamId.equals(taskApiEntity.getTeam().getId()))
+        if (!teamId.equals(taskEntity.getTeam().getId()))
             throw new TodoAppException(ErrorCode.NOT_MATCH_TEAM_AND_TASK);
         // 팀 관리자 or 업무 담당자
-        if (!taskApiEntity.getUserId().equals(userId) && !taskApiEntity.getWorkerId().equals(userId))
+        if (!taskEntity.getUserId().equals(userId) && !taskEntity.getWorkerId().equals(userId))
             throw new TodoAppException(ErrorCode.NOT_MATCH_USERID);
         //맞다면 진행
         // 이전 상태 저장
-        String previousStatus = taskApiEntity.getStatus();
-        taskApiEntity.setUserId(userId);
-        taskApiEntity.setTaskName(taskApiDto.getTaskName());
-        taskApiEntity.setTaskDesc(taskApiDto.getTaskDesc());
-        taskApiEntity.setStartDate(taskApiDto.getStartDate());
-        taskApiEntity.setDueDate(taskApiDto.getDueDate());
-        //현재 날짜 추가
-        LocalDate currentDate = LocalDate.now();
+        String previousStatus = taskEntity.getStatus();
 
-        taskApiEntity.setStatus("진행중");
-        //현재날짜가 아직 startDate 이전이면 진행예정
-        if (taskApiDto.getStartDate().isAfter(currentDate)) {
-            taskApiEntity.setStatus("진행예정");
-        } // 현재날짜가 dueDate를 지났으면 완료
-        else if (taskApiDto.getDueDate().isBefore(currentDate)) {
-            taskApiEntity.setStatus("완료");
+        Optional<String> newName = Optional.ofNullable(taskUpdateDto.getNewName());
+        if (newName.isPresent()) {
+            String newNameValue = newName.get();
+            if (newNameValue.equals("")) throw new TodoAppException(ErrorCode.NOT_ALLOWED_EMPTY_TASK_NAME);
+            taskEntity.setTaskName(newNameValue);
         }
-        taskApiRepository.save(taskApiEntity);
+
+        Optional<String> newDesc = Optional.ofNullable(taskUpdateDto.getNewDesc());
+        if (newDesc.isPresent()) taskEntity.setTaskDesc(newDesc.get());
+
+        Optional<LocalDate> newStartDate = Optional.ofNullable(taskUpdateDto.getNewStartDate());
+        if (newStartDate.isPresent()) taskEntity.setStartDate(newStartDate.get());
+
+        Optional<LocalDate> newDueDate = Optional.ofNullable(taskUpdateDto.getNewDueDate());
+        if (newDueDate.isPresent()) taskEntity.setDueDate(newDueDate.get());
+
+        Optional<String> newWorker = Optional.ofNullable(taskUpdateDto.getNewWorker());
+        if (newWorker.isPresent()) {
+            User newWorkerUserEntity = userRepository.findByUsername(newWorker.get()).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+            MemberEntity newWorkerMemberEntity = memberRepository.findByTeamAndUser(teamEntity, newWorkerUserEntity).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+            taskEntity.setMember(newWorkerMemberEntity);
+        }
+
+        Optional<String> newStatus = Optional.ofNullable(taskUpdateDto.getNewStatus());
+        if (newStatus.isPresent()) taskEntity.setStatus(newStatus.get());
+
+        //현재 날짜와 비교
+        LocalDate currentDate = LocalDate.now();
+        //현재날짜가 아직 startDate 이전이면 진행예정
+        if (taskEntity.getStartDate().isAfter(currentDate)) {
+            taskEntity.setStatus("진행예정");
+        }
+        taskApiRepository.save(taskEntity);
+
         //업무 수정후 업무 상태가 이전 상태와 달라졌을때만 알림보내기
-        if (!previousStatus.equals(taskApiEntity.getStatus())) {
-            sendTaskStatusNotification(taskApiEntity);
+        if (!previousStatus.equals(taskEntity.getStatus())) {
+            sendTaskStatusNotification(taskEntity);
         }
         return new ResponseDto("업무가 수정되었습니다.");
     }
