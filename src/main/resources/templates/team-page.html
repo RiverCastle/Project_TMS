@@ -27,6 +27,11 @@
             padding: 0;
             color: #007acc; /* 링크 색상 설정 */
         }
+
+        a {
+            text-decoration: none; /* 밑줄 제거 */
+            color: #007acc; /* 링크 색상 설정 */
+        }
     </style>
 </head>
 <body>
@@ -46,11 +51,11 @@
         }
     }
 
-    const teamId = getTeamIdFromURL();
+    const team_id = getTeamIdFromURL();
 
     // /api/team/{teamId} 팀 정보 조회
     let Jwt = localStorage.getItem("JWT");
-    fetch('/api/team/' + teamId, {
+    fetch('/api/team/' + team_id, {
         headers: {
             "Authorization": "Bearer " + Jwt
         },
@@ -76,7 +81,7 @@
         })
 
     // /api/team/{teamId}/tasks 팀 업무 전체 조회
-    fetch('/api/team/' + teamId + '/tasks', {
+    fetch('/api/team/' + team_id + '/tasks', {
         headers: {
             "Authorization": "Bearer " + Jwt
         },
@@ -114,11 +119,15 @@
             incompleteSection.appendChild(headerRow.cloneNode(true)); // TODO 회고록에 작성하기
 
             data.forEach(task => {
+                const task_id = task.id;
+                console.log(task_id);
+                console.log(task);
                 // 새로운 열(행) 생성
                 const row = document.createElement('tr');
 
                 // 각 업무의 정보를 표시할 셀(칸) 생성
-                const taskNameCell = document.createElement('td');
+                const taskNameCell = document.createElement('a');
+                taskNameCell.href = '/views/team/' + team_id + '/tasks/' + task_id;
                 taskNameCell.textContent = task.taskName;
 
                 const workerCell = document.createElement('td');
@@ -148,7 +157,7 @@
         });
 
     // /api/team/{teamId}/tasks/myTasks 팀 내 내 업무 조회
-    fetch('/api/team/' + teamId + '/tasks/myTasks',
+    fetch('/api/team/' + team_id + '/tasks/myTasks',
         {
             headers: {
                 "Authorization": "Bearer " + Jwt
@@ -183,11 +192,12 @@
             my_tasks_section.appendChild(headerRow);
 
             data.forEach(task => {
+                const task_id = task.id;
                 // 각 업무에 대한 행 생성
                 const row = document.createElement('tr');
 
-                // 작업 이름을 나타내는 셀(칸) 생성
-                const taskNameCell = document.createElement('td');
+                const taskNameCell = document.createElement('a');
+                taskNameCell.href = '/views/team/' + team_id + '/tasks/' + task_id;
                 taskNameCell.textContent = task.taskName;
 
                 // 작업자를 나타내는 셀(칸) 생성
