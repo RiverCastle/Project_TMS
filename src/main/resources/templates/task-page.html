@@ -3,8 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Task Page</title>
+    <style>
+        /* 전체 페이지 스타일링 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0; /* 페이지 배경색 설정 */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 페이지 제목 스타일링 */
+        h1 {
+            background-color: #007acc; /* 배경색 설정 */
+            color: #fff; /* 텍스트 색상 설정 */
+            text-align: center; /* 가운데 정렬 */
+            padding: 20px 0; /* 위아래 패딩 설정 */
+            margin: 0;
+        }
+
+        #task_details {
+            font-size: large;
+            margin: 0;
+            padding: 0;
+            color: #007acc; /* 링크 색상 설정 */
+        }
+
+        #comments {
+            margin: 0;
+            padding: 0;
+            color: #007acc; /* 링크 색상 설정 */
+        }
+    </style>
 </head>
 <body>
+<h1>업무 상세 페이지</h1>
+<ul id="task_details"></ul>
+<h1>댓글</h1>
+<ul id="comments"></ul>
 <script>
     // URL에서 teamId를 추출하는 함수
     const url = window.location.href;
@@ -47,34 +82,33 @@
             const task_worker = data.worker;
             const task_status = data.status;
 
-            const task_info = document.createElement('h2');
-            task_info.textContent = '업무 상세 정보';
+            const task_info = document.getElementById('task_details');
 
-            const task_name_tag = document.createElement('p');
+            const task_name_tag = document.createElement('ul');
             task_name_tag.textContent = "업무명 : " + task_name;
             task_info.appendChild(task_name_tag);
 
-            const task_desc_tag = document.createElement('p');
+            const task_desc_tag = document.createElement('ul');
             task_desc_tag.textContent = "업무 내용 : " + task_desc;
             task_info.appendChild(task_desc_tag);
 
-            const task_start_at_tag = document.createElement('p');
+            const task_start_at_tag = document.createElement('ul');
             task_start_at_tag.textContent = "업무 시작일 : " + task_start_at;
             task_info.appendChild(task_start_at_tag);
 
-            const task_end_at_tag = document.createElement('p');
+            const task_end_at_tag = document.createElement('ul');
             task_end_at_tag.textContent = "업무 마감일 : " + task_end_at;
             task_info.appendChild(task_end_at_tag);
 
-            const task_worker_tag = document.createElement('p');
+            const task_worker_tag = document.createElement('ul');
             task_worker_tag.textContent = "업무 담당자 : " + task_worker;
             task_info.appendChild(task_worker_tag);
 
-            const task_status_tag = document.createElement('p');
+            const task_status_tag = document.createElement('ul');
             task_status_tag.textContent = "업무 진행 상태 : " + task_status;
             task_info.appendChild(task_status_tag);
 
-            document.body.appendChild(task_info);
+            // document.body.appendChild(task_info);
         })
 
     // /api/team/{teamId}/task/{taskId}/comments 업무 댓글 조회
@@ -86,8 +120,7 @@
     })
         .then(response => response.json())
         .then(data => {
-            const comment_section = document.createElement('h2');
-            comment_section.textContent = '댓글';
+            const comment_section = document.getElementById('comments');
 
             // 여기서 data는 페이지 객체를 나타냅니다.
 
@@ -101,13 +134,13 @@
                 const content = comment.content;
 
                 // 작성자 이름과 내용을 HTML 엘리먼트로 만들어 추가하거나 표시
-                const commentElement = document.createElement('div');
+                const commentElement = document.createElement('ul');
                 commentElement.innerHTML = `<p><strong>${writerName}:</strong> ${content}</p>`;
 
                 // 만약 댓글에 대한 답글도 표시해야 한다면, replies를 처리할 수 있습니다.
                 if (comment.replies) {
                     comment.replies.forEach(reply => {
-                        const replyElement = document.createElement('div');
+                        const replyElement = document.createElement('ul');
                         replyElement.innerHTML = `<p>└ <strong>${reply.writerName}:</strong> ${reply.reply}</p>`;
                         // 답글을 댓글 아래에 표시하거나 원하는 위치에 추가
                         commentElement.appendChild(replyElement);
@@ -117,7 +150,7 @@
                 // 표시할 요소에 추가하거나 DOM에 직접 추가
                 comment_section.appendChild(commentElement);
             });
-            document.body.appendChild(comment_section);
+            // document.body.appendChild(comment_section);
         });
 
     // console.log(teamId + "    " + taskId);
