@@ -3,11 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        /* 전체 페이지 스타일링 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0; /* 페이지 배경색 설정 */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 페이지 제목 스타일링 */
+        h1 {
+            background-color: #007acc; /* 배경색 설정 */
+            color: #fff; /* 텍스트 색상 설정 */
+            text-align: center; /* 가운데 정렬 */
+            padding: 20px 0; /* 위아래 패딩 설정 */
+            margin: 0;
+        }
+
+        #team_info {
+            font-size: large;
+            margin: 0;
+            padding: 0;
+            color: #007acc; /* 링크 색상 설정 */
+        }
+    </style>
 </head>
 <body>
-<h2 id="team_info">Team Info</h2><br>
-
-
+<h1>팀 상세 페이지</h1>
+<ul id="team_info"></ul><br>
+<h1>업무 현황</h1>
+<table id="tasks"></table>
 <script>
     // URL에서 teamId를 추출하는 함수
     function getTeamIdFromURL() {
@@ -35,13 +61,17 @@
             // Team Info
             const team_info = document.getElementById('team_info');
             const team_name = document.createElement('h2');
-            team_name.textContent = data.name;
+            team_name.textContent = '팀이름 : ' + data.name;
             team_info.appendChild(team_name);
+
             const team_desc = document.createElement('p');
-            team_desc.textContent = data.desc;
+            team_desc.textContent = '팀설명 : ' + data.desc;
             team_info.appendChild(team_desc);
+
+            // TODO 현재인원 추가하기
+
             const team_limit = document.createElement('p');
-            team_limit.textContent = data.memberLimit;
+            team_limit.textContent = '팀 최대인원 : ' + data.memberLimit;
             team_info.appendChild(team_limit);
         })
 
@@ -55,7 +85,7 @@
         .then(response => response.json())
         .then(data => {
             // 테이블 생성
-            const table = document.createElement('table');
+            const table = document.getElementById('tasks');
 
             // 미완료 업무와 완료 업무를 나눌 섹션 생성
             const incompleteSection = document.createElement('section');
@@ -111,8 +141,10 @@
             });
 
             // 섹션을 본문에 추가
-            document.body.appendChild(incompleteSection);
-            document.body.appendChild(completeSection);
+            incompleteSection.appendChild(document.createElement('hr'));
+            completeSection.appendChild(document.createElement('hr'));
+            table.appendChild(incompleteSection);
+            table.appendChild(completeSection);
         });
 
     // /api/team/{teamId}/tasks/myTasks 팀 내 내 업무 조회
@@ -125,8 +157,12 @@
         })
         .then(response => response.json())
         .then(data => {
-            const myTasksTable = document.createElement('table');
-            myTasksTable.innerHTML = "<h2>내 업무</h2>";
+            const table = document.getElementById('tasks');
+
+
+            const my_tasks_section = document.createElement('section');
+            my_tasks_section.innerHTML = "<h2>내 업무</h2>";
+
 
             // 테이블 헤더 생성
             const headerRow = document.createElement('tr');
@@ -144,7 +180,7 @@
             headerRow.appendChild(workerHeader);
             headerRow.appendChild(statusHeader);
 
-            myTasksTable.appendChild(headerRow);
+            my_tasks_section.appendChild(headerRow);
 
             data.forEach(task => {
                 // 각 업무에 대한 행 생성
@@ -168,11 +204,12 @@
                 row.appendChild(statusCell);
 
                 // 행을 테이블에 추가
-                myTasksTable.appendChild(row);
+                my_tasks_section.appendChild(row);
             });
 
             // 테이블을 해당 요소에 추가
-            document.body.appendChild(myTasksTable);
+            my_tasks_section.appendChild(document.createElement('hr'));
+            table.appendChild(my_tasks_section);
         });
 </script>
 </body>
