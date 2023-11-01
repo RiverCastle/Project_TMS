@@ -21,7 +21,7 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
 //    private final RedissonLockTeamFacade redissonLockStockFacade;
-    @GetMapping("/search")
+    @GetMapping
     public List<TeamOverviewDto> searchTeam(@RequestParam(value = "keyword", defaultValue = "") String keyword) {
         return teamService.searchTeam(keyword);
     }
