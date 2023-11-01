@@ -73,7 +73,7 @@
             .then(body => {
                 const jwt = body.token;
                 localStorage.setItem("JWT", jwt);
-                window.location.href = '/views/myTasks';
+                window.location.href = '/views/main';
             })
 
     });
