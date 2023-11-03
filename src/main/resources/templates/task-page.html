@@ -33,6 +33,51 @@
             padding: 0;
             color: #007acc; /* 링크 색상 설정 */
         }
+
+        #new_comment_section {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #new_comment_input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #new_comment_button {
+            background-color: #007acc;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #new_comment_button:hover {
+            background-color: #005b9f;
+        }
+
+        #new_reply_button {
+            background-color: #007acc;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #new_reply_button:hover {
+            background-color: #005b9f;
+        }
+
     </style>
 </head>
 <body>
@@ -40,6 +85,12 @@
 <ul id="task_details"></ul>
 <h1>댓글</h1>
 <ul id="comments"></ul>
+<br>
+<span id="new_comment_section">
+<input id="new_comment_input" type="text" placeholder="댓글을 입력해주세요." name="comment_content">
+<button id="new_comment_button"
+        onclick="post_comment(document.getElementById('new_comment_input').value)">댓글 등록</button>
+</span>
 <script>
     // URL에서 teamId를 추출하는 함수
     const url = window.location.href;
@@ -252,7 +303,7 @@
             taskStatusEditButton.addEventListener('click', () => {
                 const newStatus = prompt('새로운 업무 상태를 입력하세요:', status);
                 if (newStatus !== null) {
-                    // @PutMapping("/api/team/{teamId}")
+                    // /api/team/{teamId}
                     fetch('/api/team/' + teamId + '/tasks/' + taskId, {
                         headers: {
                             "Authorization": auth,
@@ -313,15 +364,58 @@
                         commentElement.appendChild(replyElement);
                     });
                 }
-
+                const reply_add_button = document.createElement('button');
+                reply_add_button.id = "new_reply_button"
+                reply_add_button.textContent = "답글달기";
+                reply_add_button.addEventListener('click', () => {
+                    const new_reply_content = prompt("답글을 입력해주세요.");
+                    if (new_reply_content !== null) {
+                        const commentId = comment.id;
+                        fetch('/api/team/' + teamId + '/tasks/' + taskId + '/comments/' + commentId + '/reply', {
+                            headers: {
+                                "Authorization": auth,
+                                "Content-Type": "application/json"
+                            },
+                            method: "POST",
+                            body: JSON.stringify({
+                                "content": new_reply_content
+                            })
+                        })
+                            .then(response => {
+                                window.location.reload()
+                            })
+                            .catch(error => {
+                                alert(error.message)
+                            })
+                    }
+                })
+                commentElement.appendChild(reply_add_button);
                 // 표시할 요소에 추가하거나 DOM에 직접 추가
                 comment_section.appendChild(commentElement);
             });
-            // document.body.appendChild(comment_section);
         });
 
-    // console.log(teamId + "    " + taskId);
 
+    // console.log(teamId + "    " + taskId);
+    function post_comment(comment) {
+        fetch('/api/team/' + teamId + '/tasks/' + taskId + '/comments', {
+            headers: {
+                "Authorization": auth,
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({
+                "content": comment
+            })
+        })
+            .then(response => {
+                window.location.reload();
+            })
+    }
+
+    function post_reply(reply) {
+        fetch('/api/team/' + teamId + '/tasks/' + taskId + '/comments/' + commentId)
+    }
 
 </script>
 </body>

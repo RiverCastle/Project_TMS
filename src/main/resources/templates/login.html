@@ -65,15 +65,14 @@
                 "password": password
             })
         })
-            .then(response => {
-                if (response.status === 404) {
-                    alert("루그인 실패!");
-                } else return response.json();
-            })
+            .then(response => response.json())
             .then(body => {
                 const jwt = body.token;
                 localStorage.setItem("JWT", jwt);
                 window.location.href = '/views/main';
+            })
+            .catch(error => {
+                alert(error.message)
             })
 
     });
