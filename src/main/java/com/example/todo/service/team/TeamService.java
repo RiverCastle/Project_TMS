@@ -211,7 +211,7 @@ public class TeamService {
         return teamDetailsDto;
     }
 
-    public void createSubTeam(Long userId, Long teamId, TeamCreateDto teamCreateDto) {
+    public SubTeamOverviewDto createSubTeam(Long userId, Long teamId, TeamCreateDto teamCreateDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
         MemberEntity supTeamMember = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
@@ -239,7 +239,8 @@ public class TeamService {
         member.setTeam(teamEntity);
         member.setUser(user);
         member.setRole("Manager");
-        teamReposiotry.save(teamEntity);
+        teamEntity = teamReposiotry.save(teamEntity);
         memberRepository.save(member);
+        return SubTeamOverviewDto.fromEntity(teamEntity);
     }
 }
