@@ -32,7 +32,7 @@ public class ViewController {
     }
 
     @GetMapping("/myTasks")
-    public String myTasks(Model model) {
+    public String myTasks() {
         log.info("내 업무 조회 페이지");
         return "my-tasks";
     }
@@ -59,5 +59,10 @@ public class ViewController {
     public String taskPage(@PathVariable("teamId") Long teamId,
                            @PathVariable("taskId") Long taskId) {
         return "task-page";
+    }
+
+    @GetMapping("/new-team")
+    public String teamCreatePage() {
+        return "team-create";
     }
 }
