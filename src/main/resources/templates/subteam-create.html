@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>하위 팀 생성 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <style>
+        .form-control {
+            width: 70vw;
+        }
+    </style>
+</head>
+<body>
+<h1 class="text-center mb-5">하위 팀 생성하기</h1>
+<div class="mb-3">
+    <label>팀 이름</label>
+    <input type="text" class="form-control" id="team_name" placeholder="회사명, 부서명 등 팀을 나타내는 이름을 입력해주세요.">
+</div>
+<div class="mb-3">
+    <label>팀 소개</label>
+    <input type="text" class="form-control" id="team_desc" placeholder="이 팀에 대한 간단한 소개를 적어주세요.">
+</div>
+<div class="mb-3">
+    <label>최대 참여 인원</label>
+    <input type="number" min="1" class="form-control" id="max_member_number"
+           placeholder="숫자로 입력해주세요. 25명까지 무료로 설정할 수 있습니다.">
+</div>
+<div class="form-floating mb-3">
+    <input class="form-control" id="joinCode" name="password" type="password" placeholder="이 팀에 참여하기 위한 코드를 입력해주세요.">
+    <label for="joincode">참여코드</label>
+</div>
+<div class="d-grid">
+    <button class="btn btn-primary btn-lg" id="sign-in-button" type="button" onclick="create_subTeam()">생성하기</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+<script>
+    const Jwt = localStorage.getItem("JWT");
+    let auth = "Bearer " + Jwt;
+    const teamId = getTeamIdFromURL();
+
+    function getTeamIdFromURL() {
+        const url = window.location.href;
+        const match = url.match(/\/views\/team\/(\d+)/); // 정규식을 사용하여 추출
+        if (match) {
+            return match[1];
+        } else {
+            throw new Error("Team ID not found in URL");
+        }
+    }
+
+    function create_subTeam() {
+        const name = document.getElementById("team_name").value;
+        const desc = document.getElementById("team_desc").value;
+        const joinCode = document.getElementById("joinCode").value;
+        const max_member_number = document.getElementById("max_member_number").value;
+        console.log(name + "  " + desc + "  " + joinCode + "  " + max_member_number)
+
+
+        fetch('/api/team/' + teamId + '/subTeam', {
+            headers: {
+                "Authorization": auth,
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify({
+                "name": name,
+                "description": desc,
+                "joinCode": joinCode,
+                "participantNumMax": max_member_number
+            })
+        })
+            .then(response => response.json())
+            .then(teamOverviewDto => {
+                console.log(teamOverviewDto);
+                console.log(teamOverviewDto.id);
+                alert("성공적으로 하위 팀이 생성되었습니다.")
+                window.location.href = "/views/team/" + teamOverviewDto.id;
+            })
+
+            .catch(error => {
+                alert(error.message);
+            })
+    }
+</script>
+</body>
+</html>
