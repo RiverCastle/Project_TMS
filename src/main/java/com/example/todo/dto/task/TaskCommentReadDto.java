@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class TaskCommentReadDto {
+    private Long id;
     private String writerName;
     private String content;
     private  List<TaskCommentReplyDto> replies;
@@ -17,6 +18,7 @@ public class TaskCommentReadDto {
 
     public static TaskCommentReadDto fromEntity(TaskCommentEntity entity) {
         TaskCommentReadDto taskCommentReadDto = new TaskCommentReadDto();
+        taskCommentReadDto.setId(entity.getId());
         taskCommentReadDto.setWriterName(entity.getWriter().getUser().getUsername());
         taskCommentReadDto.setContent(entity.getContent());
 
