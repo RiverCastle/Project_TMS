@@ -37,7 +37,7 @@ public class TeamService {
     private final UsersSubscriptionRepository usersSubscriptionRepository;
     public static final int FREE_TEAM_PARTICIPANT_NUM = 25;
     @Transactional
-    public void createTeam(Long userId, TeamCreateDto teamCreateDto) {
+    public TeamOverviewDto createTeam(Long userId, TeamCreateDto teamCreateDto) {
         User manager = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
 
         //팀 최대인원이 25명을 초과할 시 구독권을 구독해야 한다.
@@ -62,8 +62,11 @@ public class TeamService {
         member.setRole("Manager");
         teamEntity.setParticipantNum(1);
 
-        teamReposiotry.save(teamEntity);
+        teamEntity = teamReposiotry.save(teamEntity);
         memberRepository.save(member);
+
+        return TeamOverviewDto.fromEntity(teamEntity);
+
     }
 
     @Transactional

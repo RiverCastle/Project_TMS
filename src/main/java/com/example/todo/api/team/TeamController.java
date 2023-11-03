@@ -34,17 +34,11 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseDto createTeam(Authentication authentication,
+    public TeamOverviewDto createTeam(Authentication authentication,
                                   @RequestBody TeamCreateDto teamCreateDto) {
         Long userId = Long.parseLong(authentication.getName());
-        log.info(teamCreateDto.getName());
-        log.info(teamCreateDto.getJoinCode());
-        log.info(teamCreateDto.getDescription());
-        teamService.createTeam(userId, teamCreateDto);
-
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setMessage("새로운 팀 등록이 완료되었습니다.");
-        return responseDto;
+        TeamOverviewDto teamOverviewDto = teamService.createTeam(userId, teamCreateDto);
+        return teamOverviewDto;
     }
 
     @GetMapping("/{teamId}/subTeam")
