@@ -56,8 +56,6 @@ public class TaskCommentService {
             String message = "'" + team.getName() + "'팀의 " + user.getUsername() + "님이'" + task.getTaskName() + "'에 메시지를 남겼습니다. createdTime:" + formattedTime;            // 관리자에게 알림을 보냄
             notificationService.notify(task.getWorkerId(), message);
         }
-        // TODO 불필요한 에러처리라고 생각
-        else throw new TodoAppException(ErrorCode.NOT_ALLOWED_MESSAGE);
     }
 
     public Page<TaskCommentReadDto> readTaskCommentsPage(Long userId, Long teamId, Long taskId, Integer page, Integer limit) {
