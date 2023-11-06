@@ -35,7 +35,9 @@
     </style>
 </head>
 <body>
-<h1>팀 상세 페이지</h1>
+<h1>팀 상세 페이지
+    <button id="sub-team-create-button" type="button" class="btn btn-light">하위 팀 생성하기</button>
+</h1>
 <ul id="team_info"></ul>
 <br>
 <h1>업무 현황
@@ -291,9 +293,15 @@
     // HTML 버튼 요소를 가져옵니다.
     const task_create_button = document.getElementById("task-create-button");
     task_create_button.addEventListener('click', () => {
-        const url = "/views/team/" + teamId + "/tasks"
-        console.log("클릭!")
+        const url = "/views/team/" + teamId + "/tasks";
         location.href = url;
+    });
+
+    const sub_team_create_button = document.getElementById("sub-team-create-button");
+    sub_team_create_button.addEventListener('click', () => {
+       const url = "/views/team/" + teamId + "/new-subTeam";
+        location.href = url;
+
     });
 </script>
 </body>
