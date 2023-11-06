@@ -54,7 +54,12 @@
     </div>
 </h1>
 <table id="tasks"></table>
+<!--JWT, Auth, team_id 스크립트-->
 <script>
+    const teamId = getTeamIdFromURL();
+    let Jwt = localStorage.getItem("JWT");
+    const auth = "Bearer " + Jwt;
+
     // URL에서 teamId를 추출하는 함수
     function getTeamIdFromURL() {
         const url = window.location.href;
@@ -65,13 +70,9 @@
             throw new Error("Team ID not found in URL");
         }
     }
-
-    const teamId = getTeamIdFromURL();
-    console.log(teamId);
-
-    // /api/team/{teamId} 팀 정보 조회
-    let Jwt = localStorage.getItem("JWT");
-    const auth = "Bearer " + Jwt;
+</script>
+<!--팀 상세 정보 조회 api 스크립트-->
+<script>
     fetch('/api/team/' + teamId, {
         headers: {
             "Authorization": auth
@@ -94,7 +95,7 @@
             team_nameEditButton.addEventListener('click', () => {
                 const newName = prompt('새로운 팀 이름을 입력하세요:', data.name);
                 if (newName !== null) {
-                    // @PutMapping("/api/team/{teamId}")
+                    // 팀 이름 수정 api
                     fetch('/api/team/' + teamId, {
                         headers: {
                             "Authorization": auth,
@@ -111,11 +112,11 @@
                             location.reload();
                         })
                         .catch(error => {
-                            alert(error.message);
-                        })
+                            alert(error.method);
+                            window.location.href="/views/login";
+                        });
                 }
             });
-
             team_info.appendChild(team_nameEditButton);
 
             // 팀 설명
@@ -129,7 +130,7 @@
             team_descEditButton.addEventListener('click', () => {
                 const newDesc = prompt('새로운 팀 설명을 입력하세요:', data.desc);
                 if (newDesc !== null) {
-                    // @PutMapping("/api/team/{teamId}")
+                    // 팀 소개 수정 api
                     fetch('/api/team/' + teamId, {
                         headers: {
                             "Authorization": auth,
@@ -146,8 +147,9 @@
                             location.reload();
                         })
                         .catch(error => {
-                            alert(error.message);
-                        })
+                            alert(error.method);
+                            window.location.href="/views/login";
+                        });
                 }
             });
             team_info.appendChild(team_descEditButton);
@@ -157,8 +159,13 @@
             team_limit.textContent = '팀 최대인원 : ' + data.memberLimit;
             team_info.appendChild(team_limit);
         })
-
-    // /api/team/{teamId}/tasks 팀 업무 전체 조회
+        .catch(error => {
+            alert(error.method);
+            window.location.href="/views/login";
+        });
+</script>
+<!--팀 내 등록 업무 전체 조회 api 스크립트-->
+<script>
     fetch('/api/team/' + teamId + '/tasks', {
         headers: {
             "Authorization": auth
@@ -230,9 +237,14 @@
             completeSection.appendChild(document.createElement('hr'));
             table.appendChild(incompleteSection);
             table.appendChild(completeSection);
+        })
+        .catch(error => {
+            alert(error.method);
+            window.location.href="/views/login";
         });
-
-    // /api/team/{teamId}/tasks/myTasks 팀 내 내 업무 조회
+</script>
+<!--팀 내 나의 업무 조회 api 스크립트-->
+<script>
     fetch('/api/team/' + teamId + '/tasks/myTasks',
         {
             headers: {
@@ -296,28 +308,37 @@
             // 테이블을 해당 요소에 추가
             my_tasks_section.appendChild(document.createElement('hr'));
             table.appendChild(my_tasks_section);
+        })
+        .catch(error => {
+            alert(error.method);
+            window.location.href="/views/login";
         });
-
+</script>
+<!--업무 생성 버튼 스크립트-->
+<script>
     // HTML 버튼 요소를 가져옵니다.
     const task_create_button = document.getElementById("task-create-button");
     task_create_button.addEventListener('click', () => {
         const url = "/views/team/" + teamId + "/tasks";
         location.href = url;
     });
-
+</script>
+<!--하위 팀 생성 버튼 스크립트-->
+<script>
     const sub_team_create_button = document.getElementById("sub-team-create-button");
     sub_team_create_button.addEventListener('click', () => {
        const url = "/views/team/" + teamId + "/new-subTeam";
         location.href = url;
     });
-
+</script>
+<!--팀 탈퇴 버튼 스크립트-->
+<script>
     const team_leave_button = document.getElementById("leave-button");
     team_leave_button.addEventListener('click', () => {
         const decision = prompt("정말 팀을 떠나시려면 \"예\"를 입력해주세요");
         console.log(decision === "예");
 
         if (decision === "예") {
-            console.log("탈퇴진행");
             fetch('/api/team/' + teamId + '/member', {
                     headers: {
                         "Authorization": auth
@@ -332,11 +353,11 @@
                     }
                 })
                 .catch(error => {
-                    alert(error.message);
-                })
+                    alert(error.method);
+                    window.location.href="/views/login";
+                });
         }
     })
-
 </script>
 <!--로그아웃 스크립트-->
 <script>
