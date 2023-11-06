@@ -303,4 +303,12 @@ public class TaskApiService {
             notificationService.notify(userId, notificationDto);
         }
     }
+
+    public void emptyMyTasks(MemberEntity member) {
+        List<TaskApiEntity> taskApiEntityList = taskApiRepository.findAllByMember(member);
+        for (TaskApiEntity taskApiEntity : taskApiEntityList) {
+            taskApiEntity.setMember(null);
+            taskApiRepository.save(taskApiEntity);
+        }
+    }
 }

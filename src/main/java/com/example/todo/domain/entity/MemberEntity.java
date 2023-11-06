@@ -16,11 +16,11 @@ public class MemberEntity {
     private Long id;
 
 //    @NotBlank
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     private TeamEntity team;
 
     @NotNull
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     private User user;
 
     private String role;

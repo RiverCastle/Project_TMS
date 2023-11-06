@@ -154,6 +154,9 @@ public class TeamService {
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
         if (member.getRole().equals("Manager")) throw new TodoAppException(ErrorCode.NOT_ALLOWED_LEAVE);
 
+        //업무 담당 해제
+        taskApiService.emptyMyTasks(member);
+
         member.setTeam(null);
         memberRepository.delete(member);
         log.info("part {}", team.getParticipantNum() - 1);
