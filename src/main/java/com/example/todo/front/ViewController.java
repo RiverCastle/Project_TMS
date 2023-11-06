@@ -55,6 +55,11 @@ public class ViewController {
         return "team-details";
     }
 
+    @GetMapping("/team/{teamId}/tasks")
+    public String taskCreate(@PathVariable("teamId") Long teamId) {
+        return "task-create";
+    }
+
     @GetMapping("/team/{teamId}/tasks/{taskId}")
     public String taskPage(@PathVariable("teamId") Long teamId,
                            @PathVariable("taskId") Long taskId) {

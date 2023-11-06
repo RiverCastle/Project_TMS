@@ -38,7 +38,11 @@
 <h1>팀 상세 페이지</h1>
 <ul id="team_info"></ul>
 <br>
-<h1>업무 현황</h1>
+<h1>업무 현황
+    <div>
+        <button id="task-create-button" type="button" class="btn btn-light">새 업무 생성하기</button>
+    </div>
+</h1>
 <table id="tasks"></table>
 <script>
     // URL에서 teamId를 추출하는 함수
@@ -53,6 +57,7 @@
     }
 
     const teamId = getTeamIdFromURL();
+    console.log(teamId);
 
     // /api/team/{teamId} 팀 정보 조회
     let Jwt = localStorage.getItem("JWT");
@@ -282,6 +287,14 @@
             my_tasks_section.appendChild(document.createElement('hr'));
             table.appendChild(my_tasks_section);
         });
+
+    // HTML 버튼 요소를 가져옵니다.
+    const task_create_button = document.getElementById("task-create-button");
+    task_create_button.addEventListener('click', () => {
+        const url = "/views/team/" + teamId + "/tasks"
+        console.log("클릭!")
+        location.href = url;
+    });
 </script>
 </body>
 </html>
