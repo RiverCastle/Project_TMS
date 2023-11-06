@@ -78,15 +78,16 @@ public class TeamService {
 //        TeamEntity team = teamReposiotry.findByIdWithOptimisticLock(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
 
         if (!team.getJoinCode().equals(teamJoinDto.getJoinCode()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong JoinCode!");
+            throw new TodoAppException(ErrorCode.BAD_JOINCODE);
 
         //팀 멤버수 제한
         if (team.getParticipantNum().equals(team.getParticipantNumMax()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "팀의 최대 허용 멤버 수를 초과했습니다.");
+        log.info("OOOOOOOO");
 
         if (memberRepository.findByTeamAndUser(team, user).isPresent())
             throw new TodoAppException(ErrorCode.ALREADY_USER_JOINED);
-
+        log.info("XXXX");
         MemberEntity member = new MemberEntity();
         member.setTeam(team);
         member.setUser(user);
@@ -95,7 +96,7 @@ public class TeamService {
 
         team.setParticipantNum(team.getParticipantNum() + 1);
         teamReposiotry.save(team);
-
+        log.info("XXXXXXXXXX");
     }
 
     public void updateTeamDetails(Long userId, TeamUpdateDto teamUpdateDto, Long teamId) {
