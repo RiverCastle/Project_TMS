@@ -111,14 +111,14 @@ public class TaskApiService {
         //현재 날짜 추가
         LocalDate currentDate = LocalDate.now();
 
-        taskApiEntity.setStatus("진행중");
-        //현재날짜가 아직 startDate 이전이면 진행예정
-        if (taskCreateDto.getStartDate().isAfter(currentDate)) {
-            taskApiEntity.setStatus("진행예정");
-        } // 현재날짜가 dueDate를 지났으면 완료
-        else if (taskCreateDto.getDueDate().isBefore(currentDate)) {
-            taskApiEntity.setStatus("완료");
-        }
+        taskApiEntity.setStatus("등록");
+//        //현재날짜가 아직 startDate 이전이면 진행예정
+//        if (taskCreateDto.getStartDate().isAfter(currentDate)) {
+//            taskApiEntity.setStatus("진행예정");
+//        } // 현재날짜가 dueDate를 지났으면 완료
+//        else if (taskCreateDto.getDueDate().isBefore(currentDate)) {
+//            taskApiEntity.setStatus("완료");
+//        }
         taskApiEntity = taskApiRepository.save(taskApiEntity);
         return new ResponseDto("업무가 등록되었습니다.");
     }
