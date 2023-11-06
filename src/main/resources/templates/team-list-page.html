@@ -56,7 +56,10 @@
     </style>
 </head>
 <body>
-<h1>등록된 조직 목록</h1>
+<h1>
+    <button id="to_main_button" type="button" class="btn btn-info">메인</button>
+    등록된 조직 목록
+</h1>
 <div class="search-container">
 
     <input class="search-input" type="text" placeholder="찾으시는 조직명을 입력해주세요." id="searchInput">
@@ -120,6 +123,13 @@
                 teamsTag.appendChild(teamTag);
             })
         })
+</script>
+<!--메인으로 가기 스크립트-->
+<script>
+    const main_button = document.getElementById("to_main_button");
+    main_button.addEventListener('click', () => {
+        window.location.href = "/views/main";
+    })
 </script>
 </body>
 </html>

@@ -12,7 +12,10 @@
     </style>
 </head>
 <body>
-<h1 class="text-center mb-5">팀 생성하기</h1>
+<h1 class="text-center mb-5">
+    <button id="to_main_button" type="button" class="btn btn-info">메인</button>
+    팀 생성하기
+</h1>
 <div class="mb-3">
     <label>팀 이름</label>
     <input type="text" class="form-control" id="team_name" placeholder="회사명, 부서명 등 팀을 나타내는 이름을 입력해주세요.">
@@ -33,7 +36,6 @@
 <div class="d-grid">
     <button class="btn btn-primary btn-lg" id="sign-in-button" type="button" onclick="create_team()">생성하기</button>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
@@ -74,6 +76,13 @@
                 alert(error.message);
             })
     }
+</script>
+<!--메인으로 가기 스크립트-->
+<script>
+    const main_button = document.getElementById("to_main_button");
+    main_button.addEventListener('click', () => {
+        window.location.href = "/views/main";
+    })
 </script>
 </body>
 </html>

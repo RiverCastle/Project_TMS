@@ -53,8 +53,11 @@
 
 </head>
 <body>
-<h1>나의 작업
-    <button id="logout_button" type="button" class="btn btn-info">로그아웃</button></h1>
+<h1>
+    <button id="to_main_button" type="button" class="btn btn-info">메인</button>
+    나의 작업
+    <button id="logout_button" type="button" class="btn btn-info">로그아웃</button>
+</h1>
 <ul id="myTasksList"></ul>
 <script>
     let Jwt = localStorage.getItem("JWT");
@@ -109,6 +112,13 @@
     const logout_button = document.getElementById("logout_button");
     logout_button.addEventListener("click", () => {
         localStorage.removeItem("JWT")
+        window.location.href = "/views/main";
+    })
+</script>
+<!--메인으로 가기 스크립트-->
+<script>
+    const main_button = document.getElementById("to_main_button");
+    main_button.addEventListener('click', () => {
         window.location.href = "/views/main";
     })
 </script>

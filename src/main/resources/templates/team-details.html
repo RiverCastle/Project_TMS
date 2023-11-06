@@ -37,10 +37,12 @@
     </style>
 </head>
 <body>
-<h1>팀 상세 페이지
+<h1>
+    <button id="to_main_button" type="button" class="btn btn-info">메인</button>
+    팀 상세 페이지
     <button id="logout_button" type="button" class="btn btn-info">로그아웃</button>
-
-    <br><button id="sub-team-create-button" type="button" class="btn btn-light">하위 팀 생성하기</button>
+    <br>
+    <button id="sub-team-create-button" type="button" class="btn btn-light">하위 팀 생성하기</button>
     <button id="leave-button" type="button" class="btn btn-light">팀 떠나기</button>
 </h1>
 <ul id="team_info"></ul>
@@ -339,6 +341,13 @@
     const logout_button = document.getElementById("logout_button");
     logout_button.addEventListener("click", () => {
         localStorage.removeItem("JWT")
+        window.location.href = "/views/main";
+    })
+</script>
+<!--메인으로 가기 스크립트-->
+<script>
+    const main_button = document.getElementById("to_main_button");
+    main_button.addEventListener('click', () => {
         window.location.href = "/views/main";
     })
 </script>
