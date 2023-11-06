@@ -3,6 +3,7 @@ package com.example.todo.api.user;
 import com.example.todo.config.filter.JwtTokenDto;
 import com.example.todo.domain.Response;
 import com.example.todo.domain.entity.user.User;
+import com.example.todo.dto.ResponseDto;
 import com.example.todo.dto.task.TaskApiDto;
 import com.example.todo.dto.team.TeamOverviewDto;
 import com.example.todo.dto.user.request.UserJoinRequestDto;
@@ -36,8 +37,11 @@ public class UserApiController {
     private final TaskApiService taskApiService;
 
     @PostMapping
-    public Response<UserJoinResponseDto> createUser(@RequestBody final UserJoinRequestDto joinDto) {
-        return Response.success(userService.createUser(joinDto));
+    public ResponseDto createUser(@RequestBody UserJoinRequestDto userJoinRequestDto) {
+        userService.createUser(userJoinRequestDto);
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setMessage("회원가입이 완료되었습니다.");
+        return responseDto;
     }
 
     @GetMapping("/find")

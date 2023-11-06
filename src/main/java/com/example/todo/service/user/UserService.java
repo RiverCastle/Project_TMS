@@ -17,6 +17,7 @@ import com.example.todo.exception.ErrorCode;
 import com.example.todo.exception.TodoAppException;
 import com.example.todo.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class UserService {
     private final UsersSubscriptionRepository usersSubscriptionRepository;
 
     @Transactional
-    public UserJoinResponseDto createUser(final UserJoinRequestDto joinDto) {
+    public UserJoinResponseDto createUser(UserJoinRequestDto joinDto) {
         passwordCheck(joinDto);
         validateDuplicateUsername(joinDto.getUsername());
         User user = joinDto.toEntity(passwordEncoder.encode(joinDto.getPassword()));
