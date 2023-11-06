@@ -15,6 +15,7 @@
 <h1 class="text-center mb-5">
     <button id="to_main_button" type="button" class="btn btn-info">메인</button>
     팀 생성하기
+    <button id="logout_button" type="button" class="btn btn-info">로그아웃</button>
 </h1>
 <div class="mb-3">
     <label>팀 이름</label>
@@ -76,6 +77,14 @@
                 alert(error.message);
             })
     }
+</script>
+<!--로그아웃 스크립트-->
+<script>
+    const logout_button = document.getElementById("logout_button");
+    logout_button.addEventListener("click", () => {
+        localStorage.removeItem("JWT")
+        window.location.reload();
+    })
 </script>
 <!--메인으로 가기 스크립트-->
 <script>
