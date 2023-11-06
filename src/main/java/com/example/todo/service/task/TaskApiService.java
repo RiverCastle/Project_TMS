@@ -168,16 +168,21 @@ public class TaskApiService {
 
     //업무 수정
     public ResponseDto updateTask(Long userId, Long teamId, Long taskId, TaskUpdateDto taskUpdateDto) {
-        TeamEntity teamEntity = getTeamById(teamId);
+        User userEntity = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        TeamEntity teamEntity = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
+        MemberEntity memberEntity = memberRepository.findByTeamAndUser(teamEntity, userEntity).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+        TaskApiEntity taskEntity = taskApiRepository.findById(taskId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK));
+
         //기능을 사용할 수 있는지 확인
         isAvailableFunction(teamEntity);
-        TaskApiEntity taskEntity = getTaskById(taskId);
+
         //대상 업무가 대상 팀의 업무가 맞는지
-        if (!teamId.equals(taskEntity.getTeam().getId()))
-            throw new TodoAppException(ErrorCode.NOT_MATCH_TEAM_AND_TASK);
+        if (!teamId.equals(taskEntity.getTeam().getId())) throw new TodoAppException(ErrorCode.NOT_MATCH_TEAM_AND_TASK);
+
         // 팀 관리자 or 업무 담당자
-        if (!taskEntity.getUserId().equals(userId) && !taskEntity.getWorkerId().equals(userId))
+        if (!memberEntity.getRole().equals("Manager") && !taskEntity.getWorkerId().equals(userId))
             throw new TodoAppException(ErrorCode.NOT_MATCH_USERID);
+        
         //맞다면 진행
         // 이전 상태 저장
         String previousStatus = taskEntity.getStatus();
