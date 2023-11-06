@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 @Data
 public class TaskCreateDto {
-    private Long id;
     @NotNull(message = "제목을 작성해주세요.")
     private String taskName;
     @NotNull(message = "설명을 작성해주세요.")
@@ -16,6 +15,5 @@ public class TaskCreateDto {
     private LocalDate startDate;
     @NotNull(message = "마감일을 작성해주세요.")
     private LocalDate dueDate;
-    private String status;
     private String worker;
 }
