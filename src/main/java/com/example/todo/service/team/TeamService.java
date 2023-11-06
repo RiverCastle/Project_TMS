@@ -102,7 +102,8 @@ public class TeamService {
     public void updateTeamDetails(Long userId, TeamUpdateDto teamUpdateDto, Long teamId) {
         User managerUser = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
-        MemberEntity managerUserMemberEntity = memberRepository.findByTeamAndUser(team, managerUser).orElseThrow(() -> new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID));
+        MemberEntity memberEntity = memberRepository.findByTeamAndUser(team, managerUser).orElseThrow(() -> new TodoAppException(ErrorCode.MISMATCH_MANAGERID_USERID));
+        if (!memberEntity.getRole().equals("Manager")) throw new TodoAppException(ErrorCode.NOT_MATCH_MANAGERID);
 
         Optional<String> name = Optional.ofNullable(teamUpdateDto.getName());
         if (name.isPresent()) {
