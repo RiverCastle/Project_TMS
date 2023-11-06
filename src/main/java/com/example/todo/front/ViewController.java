@@ -5,7 +5,6 @@ import com.example.todo.api.team.TeamController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +62,7 @@ public class ViewController {
     @GetMapping("/team/{teamId}/tasks/{taskId}")
     public String taskPage(@PathVariable("teamId") Long teamId,
                            @PathVariable("taskId") Long taskId) {
-        return "task-page";
+        return "task-details";
     }
 
     @GetMapping("/new-team")

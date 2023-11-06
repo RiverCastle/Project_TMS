@@ -1,0 +1,11 @@
+/* 왼쪽 버튼 정렬 */
+#to_main_button {
+    position: absolute;
+    left: 3vw;
+}
+
+/* 오른쪽 버튼 정렬 */
+#logout_button {
+    position: absolute;
+    right: 3vw;
+}
