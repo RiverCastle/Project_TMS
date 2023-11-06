@@ -99,20 +99,20 @@
                     const joinCode = prompt('해당 팀의 참여코드를 입력하세요 :');
                     fetch('/api/team/' + teamId + '/member', {
                         headers: {
-                            "Authorization" : auth,
+                            "Authorization": auth,
                             'Content-Type': 'application/json'
                         },
-                        method:"POST",
+                        method: "POST",
                         body: JSON.stringify({
                             "joinCode": joinCode
                         })
                     })
                         .then(response => {
-                            if (response.ok) {
-                                window.location.href = '/views/team/' + teamId;
-                            } else alert("참여코드를 확인해주세요.");
+                            if (response.ok) window.location.href = '/views/team/' + teamId;
                         })
-
+                        .catch(error => {
+                            alert(error.message);
+                        })
                 })
                 // 추가하기
                 teamTag.appendChild(teamJoinButton);
