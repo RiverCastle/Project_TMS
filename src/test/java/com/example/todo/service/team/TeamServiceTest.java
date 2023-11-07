@@ -1,80 +1,109 @@
-//package com.example.todo.service.team;
-//
-//import com.example.todo.domain.entity.MemberEntity;
-//import com.example.todo.domain.entity.TeamEntity;
-//import com.example.todo.domain.entity.user.User;
-//import com.example.todo.domain.repository.MemberRepository;
-//import com.example.todo.domain.repository.TeamReposiotry;
-//import com.example.todo.domain.repository.user.UserRepository;
-//import com.example.todo.dto.team.TeamCreateDto;
-//import com.example.todo.dto.team.TeamJoinDto;
-//import com.example.todo.facade.OptimisticLockTeamFacade;
+package com.example.todo.service.team;
+
+import com.example.todo.domain.entity.MemberEntity;
+import com.example.todo.domain.entity.TeamEntity;
+import com.example.todo.domain.entity.user.User;
+import com.example.todo.domain.repository.MemberRepository;
+import com.example.todo.domain.repository.TeamReposiotry;
+import com.example.todo.domain.repository.user.UserRepository;
+import com.example.todo.dto.team.TeamCreateDto;
+import com.example.todo.dto.team.TeamJoinDto;
+import com.example.todo.dto.team.TeamOverviewDto;
+import com.example.todo.facade.OptimisticLockTeamFacade;
 //import com.example.todo.facade.RedissonLockTeamFacade;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-//import java.util.concurrent.CountDownLatch;
-//import java.util.concurrent.ExecutorService;
-//import java.util.concurrent.Executors;
-//
-//import static org.assertj.core.api.Assertions.*;
-//
-//@SpringBootTest
-//class TeamServiceTest {
-//
-//    @Autowired
-//    TeamService teamService;
-//
-//    @Autowired
-//    OptimisticLockTeamFacade optimisticLockTeamFacade;
-//
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.assertj.core.api.Assertions.*;
+
+@SpringBootTest
+class TeamServiceTest {
+
+    @Autowired
+    TeamService teamService;
+
+    @Autowired
+    OptimisticLockTeamFacade optimisticLockTeamFacade;
+
 //    @Autowired
 //    RedissonLockTeamFacade redissonLockStockFacade;
-//
-//    @Autowired
-//    MemberRepository memberRepository;
-//
-//    @Autowired
-//    TeamReposiotry teamReposiotry;
-//
-//    @Autowired
-//    UserRepository userRepository;
-//
-////    User testUser;
-////
-////    @BeforeEach
-////    void setUp() {
-////        testUser = createUser();
-////        for (int i = 0; i < 1000; i++) {
-////            createUser();
-////        }
-////    }
-//
-//    @DisplayName("새로 만들어진 팀에 회원 한 명이 가입하는 테스트")
-//    @Test
-//    void joinTeamWithOnePerson() {
-//        // given
-//        User user = createUser();
-//        createTeam(user.getId());
-//
-//        User user1 = createUser();
-//
-//        // when
-//        TeamJoinDto joinDto = TeamJoinDto.builder()
-//                .joinCode("참여코드")
-//                .build();
-//        teamService.joinTeam(user1.getId(), joinDto, 1L);
-//        List<MemberEntity> all = memberRepository.findAll();
-//
-//        // then
-//        assertThat(all.size()).isEqualTo(2);
-//    }
-//
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    TeamReposiotry teamReposiotry;
+
+    @Autowired
+    UserRepository userRepository;
+
+    User testUser;
+
+    @BeforeEach
+    void setUp() {
+        testUser = createUser();
+        for (int i = 0; i < 100; i++) {
+            createUser();
+        }
+    }
+
+    @DisplayName("새로 만들어진 팀에 회원 한 명이 가입하는 테스트")
+    @Test
+    void joinTeamWithOnePerson() {
+        // given
+        User user = createUser();
+        createATeam(user.getId());
+
+        User user1 = createUser();
+
+        // when
+        TeamJoinDto joinDto = TeamJoinDto.builder()
+                .joinCode("참여코드")
+                .build();
+        teamService.joinTeam(user1.getId(), joinDto, 1L);
+        List<MemberEntity> all = memberRepository.findAll();
+
+        // then
+        assertThat(all.size()).isEqualTo(2);
+    }
+
+    @DisplayName("Belongs to 컬럼이 null인 최상위 조직 조회 테스트")
+    @Test
+    void searchTeamTest() {
+        // given
+        int numberN = 10;
+        // 검색시 조회되어야 할 이름이 Dep로 시작하는 최상위 조직 N + 1개
+        createNTeamStartingWithDep(numberN);
+        TeamCreateDto teamCreateDto = new TeamCreateDto("Dep 11", "Dep 팀 11 소개", "Dep 팀 11 참여코드", 5);
+        TeamOverviewDto teamOverviewDto = teamService.createTeam(1l, teamCreateDto);
+        // 검색시 조회되지 말아야 할 Dep로 시작하는 하위 조직 1개 생성
+        // 하위팀 생성 전에 최상위 팀에 가입
+        User user = createUser();
+        TeamJoinDto teamJoinDto = new TeamJoinDto("Dep 팀 11 참여코드");
+        teamService.joinTeam(user.getId(), teamJoinDto, teamOverviewDto.getId());
+        // 하위팀 생성
+        TeamCreateDto subteamCreateDto = new TeamCreateDto("Dep 서브팀 1", "소개 1", "참여코드", 6);
+        teamService.createSubTeam(user.getId(), teamOverviewDto.getId(), subteamCreateDto);
+
+        // when
+        List<TeamOverviewDto> result11 = teamService.searchTeam("Dep");
+        List<TeamOverviewDto> result0 = teamService.searchTeam("Commmmpa");
+
+        // then
+        assertThat(result11.size()).isEqualTo(11);
+        assertThat(result0.size()).isEqualTo(0);
+    }
+
 //    @DisplayName("제한된 팀 숫자에 여러명이 동시에 가입하는 테스트")
 //    @Test
 //    void joinTeamWithRaceCondition() throws InterruptedException {
@@ -125,7 +154,7 @@
 //            System.out.println("l = " + l);
 //        }
 //    }
-//
+
 //    @DisplayName("제한된 팀 숫자에 여러명이 동시에 탈퇴하는 테스트")
 //    @Test
 //    void leaveTeamWithRaceCondition() throws InterruptedException {
@@ -196,22 +225,37 @@
 //        assertThat(members.get(0).getId()).isEqualTo(1L);
 //
 //    }
-//
-//    private User createUser() {
-//        return userRepository.saveAndFlush(User.builder()
-//                .username("username")
-//                .password("password")
-//                .build());
-//    }
-//
-//    private void createTeam(Long userId) {
-//        TeamCreateDto createDto = TeamCreateDto.builder()
-//                .name("구매팀")
-//                .joinCode("참여코드")
-//                .participantNum(101)
-//                .description("구매팀입니다.")
-//                .build();
-//        teamService.createTeam(userId, createDto);
-//    }
-//
-//}
+
+    // 유저 생성
+    private User createUser() {
+        return userRepository.saveAndFlush(User.builder()
+                .username("test username")
+                .password("test password")
+                .build());
+    }
+
+    // 팀 1개 생성
+    private void createATeam(Long userId) {
+        TeamCreateDto createDto = TeamCreateDto.builder()
+                .name("구매팀")
+                .joinCode("참여코드")
+                .participantNumMax(25)
+                .description("구매팀입니다.")
+                .build();
+        teamService.createTeam(userId, createDto);
+    }
+
+    //팀 N개 생성
+    private void createNTeamStartingWithDep(int numberN) {
+        User user = createUser();
+        for (int i = 1; i <= numberN; i++) {
+            TeamCreateDto createDto = TeamCreateDto.builder()
+                    .name("Dep " + i)
+                    .joinCode("참여코드 " + i)
+                    .description(i + "번 부서입니다.")
+                    .participantNumMax(20)
+                    .build();
+            teamService.createTeam(user.getId(), createDto);
+        }
+    }
+}
