@@ -6,18 +6,21 @@ import com.example.todo.domain.entity.user.User;
 import com.example.todo.domain.repository.MemberRepository;
 import com.example.todo.domain.repository.TeamReposiotry;
 import com.example.todo.domain.repository.user.UserRepository;
-import com.example.todo.dto.team.TeamCreateDto;
-import com.example.todo.dto.team.TeamJoinDto;
-import com.example.todo.dto.team.TeamOverviewDto;
+import com.example.todo.dto.team.*;
+import com.example.todo.dto.user.request.UserJoinRequestDto;
+import com.example.todo.dto.user.response.UserJoinResponseDto;
 import com.example.todo.facade.OptimisticLockTeamFacade;
 //import com.example.todo.facade.RedissonLockTeamFacade;
+import com.example.todo.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -33,6 +36,9 @@ class TeamServiceTest {
     TeamService teamService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     OptimisticLockTeamFacade optimisticLockTeamFacade;
 
 //    @Autowired
@@ -46,16 +52,6 @@ class TeamServiceTest {
 
     @Autowired
     UserRepository userRepository;
-
-    User testUser;
-
-    @BeforeEach
-    void setUp() {
-        testUser = createUser();
-        for (int i = 0; i < 100; i++) {
-            createUser();
-        }
-    }
 
     @DisplayName("새로 만들어진 팀에 회원 한 명이 가입하는 테스트")
     @Test
@@ -102,6 +98,35 @@ class TeamServiceTest {
         // then
         assertThat(result11.size()).isEqualTo(11);
         assertThat(result0.size()).isEqualTo(0);
+    }
+
+    @DisplayName("팀 정보 업데이트 매니저 인원 추가 테스트")
+    @Test
+    void updateTeamManagerTest() {
+        // given
+        UserJoinRequestDto user1JoinReq = new UserJoinRequestDto("user1", "user1", "user1");
+        UserJoinResponseDto user1 = userService.createUser(user1JoinReq); // 최초 매니저가 될 유저
+        UserJoinRequestDto user2JoinReq = new UserJoinRequestDto("user2", "user2", "user2");
+        UserJoinResponseDto user2 = userService.createUser(user2JoinReq); // 매니저로 추가될 유저
+        TeamCreateDto testTeamCreateDto = new TeamCreateDto("test team", "test team desc", "test team joinCode", 10);
+        TeamOverviewDto testTeamDto = teamService.createTeam(user1.getId(), testTeamCreateDto); // 유저 1이 팀 생성. 팀의 관리자가 된 상태.
+
+        // 유저 2가 팀에 가입
+        TeamJoinDto teamJoinDto = new TeamJoinDto("test team joinCode");
+        teamService.joinTeam(user2.getId(), teamJoinDto, testTeamDto.getId());
+        // 매니저로 추가
+        TeamUpdateDto teamUpdateDto = new TeamUpdateDto();
+        teamUpdateDto.setUsernamesOfManagers(new ArrayList<>());
+        teamUpdateDto.getUsernamesOfManagers().add(user1.getUsername());
+        teamUpdateDto.getUsernamesOfManagers().add(user2.getUsername());
+
+        teamService.updateTeamDetails(user1.getId(), teamUpdateDto, testTeamDto.getId());
+
+        // when
+        TeamDetailsDto teamDetailsDto = teamService.getTeamDetails(user1.getId(), testTeamDto.getId());
+
+        // then
+        assertThat(teamDetailsDto.getManagerNames().size()).isEqualTo(2);
     }
 
 //    @DisplayName("제한된 팀 숫자에 여러명이 동시에 가입하는 테스트")
