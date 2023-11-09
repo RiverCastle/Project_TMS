@@ -46,7 +46,6 @@
     const Jwt = localStorage.getItem("JWT");
     let auth = "Bearer " + Jwt;
 </script>
-
 <!--팀 생성 api 스크립트-->
 <script>
     function create_team() {
@@ -78,7 +77,7 @@
                 window.location.href = "/views/team/" + teamOverviewDto.id;
             })
             .catch(error => {
-                alert(error.method);
+                alert(error.message);
                 window.location.href="/views/login";
             });
     }
