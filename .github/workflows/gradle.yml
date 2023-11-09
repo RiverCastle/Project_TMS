@@ -12,7 +12,7 @@ env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: tms-jar-bucket
   CODE_DEPLOY_APPLICATION_NAME: tms
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Git-Actions-cicd-group
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: code-deploy-group
 
 permissions:
   contents: read
