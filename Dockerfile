@@ -1,6 +1,6 @@
 FROM openjdk:17-slim
 
-WORKDIR /usr/src/app
+WORKDIR ~/app
 
 ARG JAR_PATH=./build/libs
 
