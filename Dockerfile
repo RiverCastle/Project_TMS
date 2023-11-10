@@ -1,6 +1,6 @@
 FROM openjdk:17-slim
 WORKDIR /usr/src/app
-
+ENV JWT_SECRET=$JWT_SECRET
 ARG JAR_PATH=./build/libs
 COPY ${JAR_PATH}/todo-0.0.1-SNAPSHOT.jar ${JAR_PATH}/todo-0.0.1-SNAPSHOT.jar
 
