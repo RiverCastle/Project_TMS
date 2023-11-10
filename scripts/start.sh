@@ -1,4 +1,6 @@
 #!/bin/bash
+source /home/ubuntu/.bashrc
+
 CURRENT_PID=$(sudo lsof -i :8080)
 #8080 포트 프로세스 종료
 if [ -n "$CURRENT_PID" ]; then sudo kill -9 $CURRENT_PID
