@@ -1,6 +1,8 @@
 #!/bin/bash
+CURRENT_PID=$(sudo lsof -i :8080)
 #8080 포트 프로세스 종료
-sudo fuser -k 8080/tcp
+if [ -n "$CURRENT_PID" ]; then sudo kill -9 $CURRENT_PID
+fi
 
 cd /home/ubuntu/app/build/libs
 nohup java -jar todo-0.0.1-SNAPSHOT.jar
