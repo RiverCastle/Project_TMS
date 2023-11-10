@@ -1,24 +1,18 @@
 #!/bin/bash
-export JAVA_HOME=$JAVA_HOME
-export PATH=$PATH
-export CLASS_PATH=$CLASS_PATH
-export JWT_SECRET=$JWT_SECRET
-export NAVER_ID=$NAVER_ID
-export NAVER_SECRET=$NAVER_SECRET
-export MySQL_Username=MySQL_Username
-export MySQL_Password=$MySQL_Password
 
-CURRENT_PID=$(sudo lsof -i :8080)
-#8080 포트 프로세스 종료
-if [ -n "$CURRENT_PID" ]; then sudo kill -9 $CURRENT_PID
+echo "> 현재 실행 중인 Docker 컨테이너 pid 확인했습니다(최신)." >> /home/ubuntu/deploy.log
+CURRENT_PID=$(sudo docker container ls -q)
+
+if [ -z $CURRENT_PID ];
+then
+  echo "> 현재 구동중인 Docker 컨테이너가 없으므로 종료하지 않습니다." >> /home/ubuntu/deploy.log
+else
+  echo "> sudo docker stop $CURRENT_PID" >> /home/ubuntu/deploy.log  # 현재 구동중인 Docker 컨테이너가 있다면 모두 중지
+  sudo docker stop $CURRENT_PID
+  sudo docker rm $CURRENT_PID
+  sleep 30
 fi
 
-cd /home/ubuntu/app/build/libs
-sudo nohup java -jar todo-0.0.1-SNAPSHOT.jar
-
-#sudo docker build -t ap .
-#sudo docker run -d -p 8080:8080 ap
-
-#cd /home/ubuntu/app/build/libs
-#sudo fuser -k 8080/tcp
-#nohup java -jar todo-0.0.1-SNAPSHOT.jar
+cd /home/ubuntu/app
+sudo docker build -t ap .
+sudo docker run -d -p 8080:8080 ap
