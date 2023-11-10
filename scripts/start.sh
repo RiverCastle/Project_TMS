@@ -13,6 +13,6 @@ else
   sleep 5
 fi
 
-cd /home/ubuntu/app
+cd /home/ubuntu/projects/TMS
 sudo docker build -t ap .
 sudo docker run -d -p 8080:8080 ap
