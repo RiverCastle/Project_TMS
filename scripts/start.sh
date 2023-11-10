@@ -15,4 +15,4 @@ fi
 
 cd /home/ubuntu/app
 sudo docker build -t ap .
-sudo docker run -d -p 8080:8080 --env-file EV.env ap
+sudo docker run -d -p 8080:8080 --env-file /home/ubuntu/app/scripts/EV.env ap
