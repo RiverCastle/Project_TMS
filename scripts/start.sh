@@ -13,6 +13,6 @@ else
   sleep 5
 fi
 
-cd /home/ubuntu/app
-sudo docker build -t ap .
-sudo docker run -d -p 8080:8080 ap
+cd /home/ubuntu/app/build/libs
+sudo fuser -k 8080/tcp
+nohup java -jar todo-0.0.1-SNAPSHOT.jar
