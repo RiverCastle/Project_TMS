@@ -1,5 +1,6 @@
 #!/bin/bash
-source ~/.bashrc
+
+source ~/.bash_profile
 
 PROJECT_ROOT="/home/ubuntu/app"
 JAR_FILE=$PROJECT_ROOT/build/libs/todo-0.0.1-SNAPSHOT.jar
