@@ -18,7 +18,7 @@ echo "Port 8080 is cleared!"
 # 2. ~/app/build/libs 디렉토리로 이동하고, todo-0.0.1-SNAPSHOT.jar 파일을 nohup으로 실행
 echo "change dir"
 cd ~/app/build/libs
-
+chmod +x $JAR_FILE
 if [ -f todo-0.0.1-SNAPSHOT.jar ]; then
     nohup  java -jar todo-0.0.1-SNAPSHOT.jar > $APP_LOG 2> $ERROR_LOG &
                                              CURRENT_PID=$(pgrep -f $JAR_FILE)
