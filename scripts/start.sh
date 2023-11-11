@@ -1,21 +1,25 @@
 #!/bin/bash
 
-
+PROJECT_ROOT="/home/ubuntu/app"
+JAR_FILE=$PROJECT_ROOT/build/libs/todo-0.0.1-SNAPSHOT.jar
+echo "Now, port 8080 should be clear!"
 # 1. 8080 포트가 사용 중이면 프로세스 종료
 if lsof -Pi :8080 -sTCP:LISTEN -t >/dev/null ; then
     echo "Port 8080 is in use. Trying to stop the process..."
     # 여기에 필요한 프로세스 종료 명령어를 추가하세요.
     kill -9 $(lsof -ti :8080)
 fi
+echo "Port 8080 is cleared!"
 
 # 2. ~/app/build/libs 디렉토리로 이동하고, todo-0.0.1-SNAPSHOT.jar 파일을 nohup으로 실행
+echo "change dir"
 cd ~/app/build/libs
 
 if [ -f todo-0.0.1-SNAPSHOT.jar ]; then
-    nohup java -jar todo-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+    nohup java -jar todo-0.0.1-SNAPSHOT.jar
     echo "Application started successfully."
 else
-    echo "Error: todo-0.0.1-SNAPSHOT.jar not found in ~/app/build/libs directory."
+    echo "Error: failed...T_T"
 fi
 
 
