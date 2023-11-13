@@ -363,18 +363,22 @@
             // TaskCommentReadDto 객체들을 반복하여 표시 또는 처리합니다.
             taskComments.forEach(comment => {
                 // 작성자 이름과 내용을 추출
+                const data_created_at = new Date(comment.createdAt);
+                const comment_created_at = data_created_at.getMonth() + 1 + "/" + data_created_at.getDay() + "  " + data_created_at.getHours() + ":" + data_created_at.getMinutes();
                 const writerName = comment.writerName;
                 const content = comment.content;
 
                 // 작성자 이름과 내용을 HTML 엘리먼트로 만들어 추가하거나 표시
                 const commentElement = document.createElement('ul');
-                commentElement.innerHTML = `<p><strong>${writerName}:</strong> ${content}</p>`;
+                commentElement.innerHTML = `<p>${comment_created_at} | <strong>${writerName}:</strong> ${content}</p>`;
 
                 // 만약 댓글에 대한 답글도 표시해야 한다면, replies를 처리할 수 있습니다.
                 if (comment.replies) {
                     comment.replies.forEach(reply => {
+                        const data_created_at = new Date(reply.createdAt);
+                        const reply_created_at = data_created_at.getMonth() + 1 + "/" + data_created_at.getDay() + "  " + data_created_at.getHours() + ":" + data_created_at.getMinutes();
                         const replyElement = document.createElement('ul');
-                        replyElement.innerHTML = `<p>└ <strong>${reply.writerName}:</strong> ${reply.reply}</p>`;
+                        replyElement.innerHTML = `<p>└ ${reply_created_at} | <strong>${reply.writerName}:</strong> ${reply.reply}</p>`;
                         // 답글을 댓글 아래에 표시하거나 원하는 위치에 추가
                         commentElement.appendChild(replyElement);
                     });
