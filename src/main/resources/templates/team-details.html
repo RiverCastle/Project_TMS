@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="button.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 
     <style>
         /* 전체 페이지 스타일링 */
@@ -44,6 +45,7 @@
     <button id="logout_button" type="button" class="btn btn-info">로그아웃</button>
     <br>
     <button id="sub-team-create-button" type="button" class="btn btn-light">하위 팀 생성하기</button>
+    <button id="sub-team-list-button" type="button" class="btn btn-light">하위 팀 목록보기</button>
     <button id="leave-button" type="button" class="btn btn-light">팀 떠나기</button>
 </h1>
 <ul id="team_info"></ul>
@@ -113,7 +115,7 @@
                         })
                         .catch(error => {
                             alert(error.method);
-                            window.location.href="/views/login";
+                            window.location.href = "/views/login";
                         });
                 }
             });
@@ -148,7 +150,7 @@
                         })
                         .catch(error => {
                             alert(error.method);
-                            window.location.href="/views/login";
+                            window.location.href = "/views/login";
                         });
                 }
             });
@@ -161,7 +163,7 @@
         })
         .catch(error => {
             alert(error.method);
-            window.location.href="/views/login";
+            window.location.href = "/views/login";
         });
 </script>
 <!--팀 내 등록 업무 전체 조회 api 스크립트-->
@@ -240,7 +242,7 @@
         })
         .catch(error => {
             alert(error.method);
-            window.location.href="/views/login";
+            window.location.href = "/views/login";
         });
 </script>
 <!--팀 내 나의 업무 조회 api 스크립트-->
@@ -311,7 +313,7 @@
         })
         .catch(error => {
             alert(error.method);
-            window.location.href="/views/login";
+            window.location.href = "/views/login";
         });
 </script>
 <!--업무 생성 버튼 스크립트-->
@@ -327,9 +329,17 @@
 <script>
     const sub_team_create_button = document.getElementById("sub-team-create-button");
     sub_team_create_button.addEventListener('click', () => {
-       const url = "/views/team/" + teamId + "/new-subTeam";
+        const url = "/views/team/" + teamId + "/new-subTeam";
         location.href = url;
     });
+</script>
+<!--하위 팀 목록보기 버튼 스크립트-->
+<script>
+    const sub_team_list_button = document.getElementById("sub-team-list-button");
+    sub_team_list_button.addEventListener('click', () => {
+        const url = "/views/team/" + teamId + "/subteam"
+        window.location.href = url;
+    })
 </script>
 <!--팀 탈퇴 버튼 스크립트-->
 <script>
@@ -354,7 +364,7 @@
                 })
                 .catch(error => {
                     alert(error.method);
-                    window.location.href="/views/login";
+                    window.location.href = "/views/login";
                 });
         }
     })

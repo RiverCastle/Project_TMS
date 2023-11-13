@@ -74,4 +74,9 @@ public class ViewController {
     public String subTeamCreatePage(@PathVariable("teamId") Long teamId) {
         return "subteam-create";
     }
+
+    @GetMapping("/team/{teamId}/subteam")
+    public String subTeamListPage(@PathVariable("teamId") Long teamId) {
+        return "subteam-list-page";
+    }
 }
