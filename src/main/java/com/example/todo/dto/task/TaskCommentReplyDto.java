@@ -14,12 +14,12 @@ public class TaskCommentReplyDto {
     private String  writerName;
     @NotNull(message = "내용을 작성해주세요.")
     private String reply;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     public static TaskCommentReplyDto fromEntity(TaskCommentReplyEntity entity) {
         TaskCommentReplyDto replyReadDto = new TaskCommentReplyDto();
         replyReadDto.setWriterName(entity.getWriter().getUser().getUsername());
         replyReadDto.setReply(entity.getReply());
-        replyReadDto.setCreateAt(entity.getCreatedAt());
+        replyReadDto.setCreatedAt(entity.getCreatedAt());
         return replyReadDto;
     }
 }
