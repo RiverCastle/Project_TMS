@@ -58,6 +58,20 @@ public class TaskCommentApiController {
         responseDto.setMessage("Task에 댓글이 수정되었습니다.");
         return responseDto;
     }
+    // 댓글 삭제
+    @DeleteMapping("/{commentId}")
+    public ResponseDto deleteComment(Authentication authentication,
+                                     @PathVariable("teamId") Long teamId,
+                                     @PathVariable("taskId") Long taskId,
+                                     @PathVariable("commentId") Long commentId) {
+        Long userId = Long.parseLong(authentication.getName());
+        taskCommentService.deleteComment(userId, teamId, taskId, commentId);
+
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setMessage("댓글이 성공적으로 삭제되었습니다.");
+        return responseDto;
+    }
+
     //답글 달기
     @PostMapping("/{commentId}/reply")
     public ResponseDto addReply(
@@ -73,4 +87,5 @@ public class TaskCommentApiController {
         responseDto.setMessage("댓글에 답글을 남겼습니다.");
         return responseDto;
     }
+
 }

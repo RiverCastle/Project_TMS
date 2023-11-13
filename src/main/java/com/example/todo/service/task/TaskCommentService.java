@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -65,7 +66,7 @@ public class TaskCommentService {
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").ascending());
-        Page<TaskCommentEntity> taskCommentEntityPage = taskCommentRepository.findAllByTaskApiEntity(task, pageable);
+        Page<TaskCommentEntity> taskCommentEntityPage = taskCommentRepository.findAllByTaskApiEntityAndDeletedAtIsNull(task, pageable);
         Page<TaskCommentReadDto> commentDtoPage = taskCommentEntityPage.map(TaskCommentReadDto::fromEntity);
         return commentDtoPage;
     }
@@ -120,5 +121,18 @@ public class TaskCommentService {
             notificationService.notify(task.getWorkerId(), message);
         }
         return taskCommentReplyRepository.save(replyEntity);
+    }
+
+    public void deleteComment(Long userId, Long teamId, Long taskId, Long commentId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
+        TaskApiEntity task = taskApiRepository.findById(taskId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK));
+        MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+        TaskCommentEntity taskComment = taskCommentRepository.findById(commentId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK_COMMENT));
+
+        if (taskComment.getWriter() != member) throw new TodoAppException(ErrorCode.NOT_WRITER);
+        LocalDateTime now = LocalDateTime.from(Instant.from(Instant.now()));
+        taskComment.setDeletedAt(now);
+        taskCommentRepository.save(taskComment);
     }
 }
