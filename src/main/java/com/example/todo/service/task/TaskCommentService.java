@@ -131,6 +131,7 @@ public class TaskCommentService {
         TaskCommentEntity taskComment = taskCommentRepository.findById(commentId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK_COMMENT));
         if (!taskComment.getWriter().equals(member)) throw new TodoAppException(ErrorCode.NOT_WRITER);
 
+        if (taskComment.getDeletedAt() != null) throw new TodoAppException(ErrorCode.ALREADY_DELETED);
         taskComment.setDeletedAt(LocalDateTime.now());
         taskCommentRepository.save(taskComment);
     }
@@ -146,6 +147,7 @@ public class TaskCommentService {
         if (!replyEntity.getTaskCommentEntity().equals(taskComment)) throw new TodoAppException(ErrorCode.COMMENT_REPLY_MISMATCH);
         if (!replyEntity.getWriter().equals(member)) throw new TodoAppException(ErrorCode.NOT_WRITER);
 
+        if (replyEntity.getDeletedAt() != null) throw new TodoAppException(ErrorCode.ALREADY_DELETED);
         replyEntity.setDeletedAt(LocalDateTime.now());
         taskCommentReplyRepository.save(replyEntity);
     }
