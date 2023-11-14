@@ -129,10 +129,9 @@ public class TaskCommentService {
         TaskApiEntity task = taskApiRepository.findById(taskId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK));
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
         TaskCommentEntity taskComment = taskCommentRepository.findById(commentId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK_COMMENT));
+        if (!taskComment.getWriter().equals(member)) throw new TodoAppException(ErrorCode.NOT_WRITER);
 
-        if (taskComment.getWriter() != member) throw new TodoAppException(ErrorCode.NOT_WRITER);
-        LocalDateTime now = LocalDateTime.from(Instant.from(Instant.now()));
-        taskComment.setDeletedAt(now);
+        taskComment.setDeletedAt(LocalDateTime.now());
         taskCommentRepository.save(taskComment);
     }
 }
