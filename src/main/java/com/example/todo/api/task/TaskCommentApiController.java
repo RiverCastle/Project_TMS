@@ -88,4 +88,18 @@ public class TaskCommentApiController {
         return responseDto;
     }
 
+    @DeleteMapping("/{commentId}/reply/{replyId}")
+    public ResponseDto deleteReply(Authentication authentication,
+                                   @PathVariable("teamId") Long teamId,
+                                   @PathVariable("taskId") Long taskId,
+                                   @PathVariable("commentId") Long commentId,
+                                   @PathVariable("replyId") Long replyId) {
+        Long userId = Long.parseLong(authentication.getName());
+        taskCommentService.deleteReply(userId, teamId, taskId, commentId, replyId);
+
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setMessage("성공적으로 답글이 삭제되었습니다.");
+        return responseDto;
+    }
+
 }
