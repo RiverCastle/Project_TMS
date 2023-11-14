@@ -18,7 +18,7 @@ public class TaskCommentReplyDto {
     public static TaskCommentReplyDto fromEntity(TaskCommentReplyEntity entity) {
         TaskCommentReplyDto replyReadDto = new TaskCommentReplyDto();
         replyReadDto.setWriterName(entity.getWriter().getUser().getUsername());
-        replyReadDto.setReply(entity.getReply());
+        replyReadDto.setReply(entity.getDeletedAt() == null ? entity.getReply() : "삭제된 답글입니다.");
         replyReadDto.setCreatedAt(entity.getCreatedAt());
         return replyReadDto;
     }
