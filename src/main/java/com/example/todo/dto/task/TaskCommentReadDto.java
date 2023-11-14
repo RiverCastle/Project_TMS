@@ -22,7 +22,7 @@ public class TaskCommentReadDto {
         TaskCommentReadDto taskCommentReadDto = new TaskCommentReadDto();
         taskCommentReadDto.setId(entity.getId());
         taskCommentReadDto.setWriterName(entity.getWriter().getUser().getUsername());
-        taskCommentReadDto.setContent(entity.getContent());
+        taskCommentReadDto.setContent(entity.getDeletedAt() == null ? entity.getContent() : "삭제된 댓글입니다.");
         taskCommentReadDto.setCreatedAt(entity.getCreatedAt());
         List<TaskCommentReplyDto> replyDtos = entity.getReplies().stream()
                 .map(replyEntity -> TaskCommentReplyDto.fromEntity(replyEntity))

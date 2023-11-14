@@ -66,7 +66,7 @@ public class TaskCommentService {
         MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").ascending());
-        Page<TaskCommentEntity> taskCommentEntityPage = taskCommentRepository.findAllByTaskApiEntityAndDeletedAtIsNull(task, pageable);
+        Page<TaskCommentEntity> taskCommentEntityPage = taskCommentRepository.findAllByTaskApiEntity(task, pageable);
         Page<TaskCommentReadDto> commentDtoPage = taskCommentEntityPage.map(TaskCommentReadDto::fromEntity);
         return commentDtoPage;
     }
