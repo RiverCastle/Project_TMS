@@ -134,4 +134,18 @@ public class TaskCommentService {
         taskComment.setDeletedAt(LocalDateTime.now());
         taskCommentRepository.save(taskComment);
     }
+
+    public void deleteReply(Long userId, Long teamId, Long taskId, Long commentId, Long replyId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+        TeamEntity team = teamReposiotry.findById(teamId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TEAM));
+        TaskApiEntity task = taskApiRepository.findById(taskId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK));
+        MemberEntity member = memberRepository.findByTeamAndUser(team, user).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_MEMBER));
+        TaskCommentEntity taskComment = taskCommentRepository.findById(commentId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_TASK_COMMENT));
+        if (!taskComment.getTaskApiEntity().equals(task)) throw new TodoAppException(ErrorCode.TASK_COMMENT_MISMATCH);
+        TaskCommentReplyEntity replyEntity = taskCommentReplyRepository.findById(replyId).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_REPLY));
+        if (!replyEntity.getTaskCommentEntity().equals(taskComment)) throw new TodoAppException(ErrorCode.COMMENT_REPLY_MISMATCH);
+
+        replyEntity.setDeletedAt(LocalDateTime.now());
+        taskCommentReplyRepository.save(replyEntity);
+    }
 }
