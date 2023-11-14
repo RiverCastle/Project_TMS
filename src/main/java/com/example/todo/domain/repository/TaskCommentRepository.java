@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaskCommentRepository extends JpaRepository<TaskCommentEntity, Long> {
     Page<TaskCommentEntity> findAllByTaskApiEntity(TaskApiEntity taskApiEntity, Pageable pageable);
+
 }
