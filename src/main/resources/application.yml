@@ -48,6 +48,9 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
+  token:
+    access-token-valid-time: ${access-token-valid-time}
+    refresh-token-valid-time: ${refresh-token-valid-time}
 
 iamport:
   key: 1231234
