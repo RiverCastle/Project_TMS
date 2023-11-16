@@ -20,23 +20,41 @@ import java.util.Set;
 @Slf4j
 @Component
 public class TokenProvider {
-
     private final Key key;
     private final JwtParser jwtParser;
+    private Long accessTokenValidTime;
+    private Long refreshTokenValidTime;
 
-    public TokenProvider(@Value("${jwt.secret}") String key) {
+    public TokenProvider(@Value("${jwt.secret}") String key,
+                         @Value("${jwt.token.access-token-valid-time}") Long accessTokenValidTime,
+                         @Value("${jwt.token.refresh-token-valid-time}") Long refreshTokenValidTime) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
         this.jwtParser = Jwts.parserBuilder()
                 .setSigningKey(this.key)
                 .build();
+        this.accessTokenValidTime = accessTokenValidTime;
+        this.refreshTokenValidTime = refreshTokenValidTime;
     }
 
     public String createAccessToken(User user) {
         return Jwts.builder()
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(60*60*24*30)))
+                .setExpiration(Date.from(Instant.now().plusSeconds(accessTokenValidTime)))
                 .claim("id", user.getId())
                 .claim("role", user.getRole())
+                .signWith(key)
+                .compact();
+    }
+
+    public String createRefreshToken() {
+        Claims claims = Jwts
+                .claims();
+
+        return Jwts
+                .builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidTime))
                 .signWith(key)
                 .compact();
     }
@@ -49,17 +67,15 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(claims.get("id"), null, authorities);
     }
 
-    public boolean validToken(String token) {
-        try {
-            jwtParser.parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            log.error("ValidToken but it is Expired", e);
-            return false;
-        } catch (Exception e) {
-            log.error("invalidToken", e);
-            return false;
-        }
+    public boolean validToken(String accessToken) {
+        jwtParser.parseClaimsJws(accessToken);
+        return true;
+    }
+
+    public boolean validateRefreshToken(String refreshToken) {
+        // Refresh Token의 유효성 검사 로직을 구현
+        jwtParser.parseClaimsJws(refreshToken);
+        return true;
     }
 
     public Claims getClaims(String token) {

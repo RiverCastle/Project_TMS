@@ -1,6 +1,13 @@
 package com.example.todo.config.filter;
 
+import com.example.todo.domain.entity.token.RefreshTokenEntity;
+import com.example.todo.domain.entity.user.User;
+import com.example.todo.domain.repository.user.UserRepository;
+import com.example.todo.exception.ErrorCode;
+import com.example.todo.exception.TodoAppException;
+import com.example.todo.jwt.RefreshTokenService;
 import com.example.todo.jwt.TokenProvider;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +28,8 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
+    private final RefreshTokenService refreshTokenService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -39,15 +48,31 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String accessToken = authHeader.split(" ")[1];
-        if (!tokenProvider.validToken(accessToken)) {
-            filterChain.doFilter(request, response);
-            return;
+        try {
+            tokenProvider.validToken(accessToken);
+        } catch (ExpiredJwtException e) {
+            RefreshTokenEntity refreshToken = refreshTokenService.getRefreshTokenByAccessToken(accessToken);
+            if (tokenProvider.validateRefreshToken(refreshToken.getRefreshToken())) {
+                log.info("Before update : " + accessToken);
+                log.info("AccessToken Expired. RefreshToken is Valid.");
+                User user = userRepository.findById(refreshToken.getUserId()).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
+                log.info("Good. User found : " + user.getUsername());
+                accessToken = tokenProvider.createAccessToken(user);
+                log.info("Reissued AccessToken");
+                refreshTokenService.saveNewAccessTokenInRefreshToken(accessToken, refreshToken);
+                log.info("refresh token is updated!");
+            } else {
+                log.info("Refresh Token is Invalid. Relog in Needed.");
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
+        log.info("access token : " + accessToken);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(tokenProvider.getAuthentication(accessToken));
         SecurityContextHolder.setContext(context);
-
+        response.setHeader("Authorization", "Bearer " + accessToken);
         filterChain.doFilter(request, response);
     }
 }

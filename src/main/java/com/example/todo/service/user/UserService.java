@@ -15,6 +15,7 @@ import com.example.todo.dto.user.response.UserJoinResponseDto;
 import com.example.todo.dto.user.response.UserUpdateResponseDto;
 import com.example.todo.exception.ErrorCode;
 import com.example.todo.exception.TodoAppException;
+import com.example.todo.jwt.RefreshTokenService;
 import com.example.todo.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final RefreshTokenService refreshTokenService;
     private final SubscriptionRepository subscriptionRepository;
     private final UsersSubscriptionRepository usersSubscriptionRepository;
 
@@ -83,7 +85,10 @@ public class UserService {
     public String login(UserLoginRequestDto loginRequestDto) {
         User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
         if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            return tokenProvider.createAccessToken(user);
+            String accessToken = tokenProvider.createAccessToken(user);
+            String refreshToken = tokenProvider.createRefreshToken();
+            refreshTokenService.saveNewRefreshToken(accessToken, refreshToken, user.getId());
+            return accessToken;
         } else throw new TodoAppException(ErrorCode.LOGIN_FAILS);
     }
 }
