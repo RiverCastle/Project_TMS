@@ -13,27 +13,21 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    // access token 으로 refreshToken 객체 조회하기
     public RefreshTokenEntity getRefreshTokenByAccessToken(String accessToken) {
-        try {
-            // 여기에서 accessToken을 디코딩하여 사용자 정보 등을 얻어올 수 있습니다.
-            // 이 예시에서는 단순히 accessToken 자체를 사용하여 Refresh Token을 조회하는 것으로 가정합니다.
-
-            RefreshTokenEntity refreshTokenEntity =
-                    refreshTokenRepository.findById(accessToken).orElseThrow(() -> new TodoAppException(ErrorCode.LOGIN_NEEDED));
-
-            return refreshTokenEntity;
-        } catch (Exception e) {
-            // 예외 처리
-            return null;
-        }
+        RefreshTokenEntity refreshTokenEntity =
+                refreshTokenRepository.findById(accessToken).orElseThrow(() -> new TodoAppException(ErrorCode.LOGIN_NEEDED));
+        return refreshTokenEntity;
     }
 
+    // access token 재발급 후 리프레시 토큰 객체 업데이트
     public void saveNewAccessTokenInRefreshToken(String reAccessToken, RefreshTokenEntity refreshToken) {
         refreshToken.setAccessToken(reAccessToken);
         refreshTokenRepository.save(refreshToken);
 
     }
 
+    // 로그인 시 리프레시 토큰 객체 생성 및 저장
     public void saveNewRefreshToken(String accessToken, String refreshToken, Long userId) {
         RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(accessToken, refreshToken, userId);
         refreshTokenRepository.save(refreshTokenEntity);

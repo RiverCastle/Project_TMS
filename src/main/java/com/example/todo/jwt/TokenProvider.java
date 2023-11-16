@@ -73,11 +73,9 @@ public class TokenProvider {
     }
 
     public boolean validateRefreshToken(String refreshToken) {
-        // Refresh Token의 유효성 검사 로직을 구현
         jwtParser.parseClaimsJws(refreshToken);
         return true;
     }
-
     public Claims getClaims(String token) {
         return jwtParser.parseClaimsJws(token)
                 .getBody();

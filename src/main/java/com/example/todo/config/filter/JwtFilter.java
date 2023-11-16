@@ -47,27 +47,20 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String accessToken = authHeader.split(" ")[1];
+        String accessToken = authHeader.split(" ")[1]; // 엑세스 토큰
         try {
-            tokenProvider.validToken(accessToken);
-        } catch (ExpiredJwtException e) {
+            tokenProvider.validToken(accessToken); // 엑세스 토큰 유효성 확인
+        } catch (ExpiredJwtException e) { // 엑세스 토큰이 만료된 경우 => 리프레시 토큰 조회
             RefreshTokenEntity refreshToken = refreshTokenService.getRefreshTokenByAccessToken(accessToken);
-            if (tokenProvider.validateRefreshToken(refreshToken.getRefreshToken())) {
-                log.info("Before update : " + accessToken);
-                log.info("AccessToken Expired. RefreshToken is Valid.");
+            if (tokenProvider.validateRefreshToken(refreshToken.getRefreshToken())) { // 리프레시 토큰이 유효한 경우
                 User user = userRepository.findById(refreshToken.getUserId()).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
-                log.info("Good. User found : " + user.getUsername());
                 accessToken = tokenProvider.createAccessToken(user);
-                log.info("Reissued AccessToken");
                 refreshTokenService.saveNewAccessTokenInRefreshToken(accessToken, refreshToken);
-                log.info("refresh token is updated!");
-            } else {
-                log.info("Refresh Token is Invalid. Relog in Needed.");
+            } else { // 리프레시 토큰이 유효하지 않은 경우
                 filterChain.doFilter(request, response);
                 return;
             }
         }
-        log.info("access token : " + accessToken);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(tokenProvider.getAuthentication(accessToken));
