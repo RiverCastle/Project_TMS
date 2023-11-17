@@ -47,46 +47,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
-<script>
-    const sign_up_button = document.getElementById("sign-in-button");
-    sign_up_button.addEventListener('click', () => {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const password_check = document.getElementById("password-check").value;
-
-            fetch('/api/users', {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    method: "POST",
-                    body: JSON.stringify({
-                        "username": username,
-                        "password": password,
-                        "passwordCheck": password_check
-                    })
-                }
-            )
-                .then(response => {
-                    if (response.ok) {
-                        alert("회원가입이 완료되었습니다.")
-                        window.location.href = "/views/login";
-                    } else {
-                        response.json().then(error => {
-                            alert(error.message);
-                            console.log(error.message);
-                        })
-                    }
-                })
-        }
-    )
-</script>
-<!--메인으로 가기 스크립트-->
-<script>
-    const main_button = document.getElementById("to_main_button");
-    main_button.addEventListener('click', () => {
-        window.location.href = "/views/main";
-    })
-</script>
-
+<!--회원가입 버튼 스크립트-->
+<script src="/js/user-sign-up-button.js"></script>
+<!--메인으로 버튼 스크립트-->
+<script src="/js/main-button.js"></script>
 </body>
 </html>

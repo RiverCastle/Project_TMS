@@ -63,12 +63,4 @@ public class UserApiController {
         log.info("내 업무 조회 api");
         return taskApiService.getMyTasks(userId);
     }
-
-    @PostMapping("/login")
-    public JwtTokenDto issueJWT(@RequestBody UserLoginRequestDto loginRequestDto) {
-        String jwt = userService.login(loginRequestDto);
-        JwtTokenDto jwtTokenDto = new JwtTokenDto();
-        jwtTokenDto.setToken(jwt);
-        return jwtTokenDto;
-    }
 }

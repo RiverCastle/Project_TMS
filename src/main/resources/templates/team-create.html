@@ -47,55 +47,10 @@
     let auth = "Bearer " + Jwt;
 </script>
 <!--팀 생성 api 스크립트-->
-<script>
-    function create_team() {
-        const name = document.getElementById("team_name").value;
-        const desc = document.getElementById("team_desc").value;
-        const joinCode = document.getElementById("joinCode").value;
-        const max_member_number = document.getElementById("max_member_number").value;
-        console.log(name +"  " + desc+"  " +joinCode+"  " +max_member_number)
-
-
-        fetch('/api/team', {
-            headers: {
-                "Authorization": auth,
-                'Content-Type': 'application/json'
-            },
-            method: "POST",
-            body: JSON.stringify({
-                "name": name,
-                "description": desc,
-                "joinCode": joinCode,
-                "participantNumMax": max_member_number
-            })
-        })
-            .then(response => response.json())
-            .then(teamOverviewDto => {
-                console.log(teamOverviewDto);
-                console.log(teamOverviewDto.id);
-                alert("성공적으로 팀이 생성되었습니다.")
-                window.location.href = "/views/team/" + teamOverviewDto.id;
-            })
-            .catch(error => {
-                alert(error.message);
-                window.location.href="/views/login";
-            });
-    }
-</script>
+<script src="/js/team-create-button.js"></script>
 <!--로그아웃 스크립트-->
-<script>
-    const logout_button = document.getElementById("logout_button");
-    logout_button.addEventListener("click", () => {
-        localStorage.removeItem("JWT")
-        window.location.reload();
-    })
-</script>
-<!--메인으로 가기 스크립트-->
-<script>
-    const main_button = document.getElementById("to_main_button");
-    main_button.addEventListener('click', () => {
-        window.location.href = "/views/main";
-    })
-</script>
+<script src="/js/logout-button.js"></script>
+<!--메인으로 버튼 스크립트-->
+<script src="/js/main-button.js"></script>
 </body>
 </html>

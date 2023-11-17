@@ -37,8 +37,6 @@ import static com.example.todo.exception.ErrorCode.ALREADY_USER_USERNAME;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final TokenProvider tokenProvider;
-    private final RefreshTokenService refreshTokenService;
     private final SubscriptionRepository subscriptionRepository;
     private final UsersSubscriptionRepository usersSubscriptionRepository;
 
@@ -82,13 +80,4 @@ public class UserService {
         if (!userJoinRequestDto.getPassword().equals(userJoinRequestDto.getPasswordCheck())) throw new TodoAppException(ErrorCode.PASSWORD_PASSWORDCHECK_MISMATCH);
     }
 
-    public String login(UserLoginRequestDto loginRequestDto) {
-        User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(() -> new TodoAppException(ErrorCode.NOT_FOUND_USER));
-        if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            String accessToken = tokenProvider.createAccessToken(user);
-            String refreshToken = tokenProvider.createRefreshToken();
-            refreshTokenService.saveNewRefreshToken(accessToken, refreshToken, user.getId());
-            return accessToken;
-        } else throw new TodoAppException(ErrorCode.LOGIN_FAILS);
-    }
 }
