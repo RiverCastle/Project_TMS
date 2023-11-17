@@ -83,13 +83,7 @@
     }
 </script>
 <!--로그아웃 스크립트-->
-<script>
-    const logout_button = document.getElementById("logout_button");
-    logout_button.addEventListener("click", () => {
-        localStorage.removeItem("JWT")
-        window.location.reload();
-    })
-</script>
+<script src="/js/logout-button.js"></script>
 <!--메인으로 버튼 스크립트-->
 <script src="/js/main-button.js"></script>
 </body>
