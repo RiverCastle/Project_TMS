@@ -78,63 +78,7 @@
     let auth = 'Bearer ' + localStorage.getItem("JWT");
 </script>
 <!--등록된 최상위 조직 조회 api 스크립트-->
-<script>
-    const search_button = document.getElementById("search-button");
-    search_button.addEventListener("click", () => {
-        const keyword_input = document.getElementById("search-input").value;
-        let teamsTag = document.getElementById("enrolled teams");
-        teamsTag.innerHTML = '';
-        fetch('/api/team?keyword=' + keyword_input, {
-            method: "GET"
-        })
-            .then(response => response.json())
-            .then(list => {
-                list.forEach(teamOverviewDto => {
-                    const teamId = teamOverviewDto.id;
-                    const teamTag = document.createElement('tr');
-
-                    const teamNameTag = document.createElement('th');
-                    teamNameTag.style.width = "20vw";
-                    teamNameTag.textContent = teamOverviewDto.teamName;
-                    teamTag.appendChild(teamNameTag);
-
-                    const teamDescTag = document.createElement('th');
-                    teamDescTag.style.width = "40vw";
-                    teamDescTag.textContent = teamOverviewDto.teamDesc;
-                    teamTag.appendChild(teamDescTag);
-
-                    const teamJoinButton = document.createElement('button');
-                    teamJoinButton.type = "button";
-                    teamJoinButton.className = "btn btn-info";
-                    teamJoinButton.name = "가입하기";
-                    // 팀 가입 api
-                    teamJoinButton.addEventListener('click', () => {
-                        const joinCode = prompt('해당 팀의 참여코드를 입력하세요 :');
-                        fetch('/api/team/' + teamId + '/member', {
-                            headers: {
-                                "Authorization": auth,
-                                'Content-Type': 'application/json'
-                            },
-                            method: "POST",
-                            body: JSON.stringify({
-                                "joinCode": joinCode
-                            })
-                        })
-                            .then(response => {
-                                if (response.ok) window.location.href = '/views/team/' + teamId;
-                            })
-                            .catch(error => {
-                                alert(error.message);
-                            })
-                    })
-                    // 추가하기
-                    teamTag.appendChild(teamJoinButton);
-                    teamsTag.appendChild(document.createElement('hr'));
-                    teamsTag.appendChild(teamTag);
-                })
-            })
-    })
-</script>
+<script src="/js/search-button.js" type="module"></script>
 <!--로그아웃 스크립트-->
 <script src="/js/logout-button.js"></script>
 <!--메인으로 버튼 스크립트-->
