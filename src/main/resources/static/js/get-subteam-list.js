@@ -12,12 +12,12 @@ fetch('/api/team/' + teamId + '/subTeam', {
             const teamTag = document.createElement('tr');
 
             const teamNameTag = document.createElement('th');
-            teamNameTag.style.width = "20vw";
+            teamNameTag.style.width = "35vw";
             teamNameTag.textContent = teamOverviewDto.teamName;
             teamTag.appendChild(teamNameTag);
 
             const teamDescTag = document.createElement('th');
-            teamDescTag.style.width = "40vw";
+            teamDescTag.style.width = "45vw";
             teamDescTag.textContent = teamOverviewDto.teamDesc;
             teamTag.appendChild(teamDescTag);
 
