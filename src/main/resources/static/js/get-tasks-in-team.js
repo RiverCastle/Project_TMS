@@ -45,12 +45,16 @@ fetch('/api/team/' + teamId + '/tasks', {
             const taskNameCell = document.createElement('a');
             taskNameCell.href = '/views/team/' + teamId + '/tasks/' + task_id;
             taskNameCell.textContent = task.taskName;
+            taskNameCell.style.width = "35vw";
 
             const workerCell = document.createElement('td');
             workerCell.textContent = task.worker;
+            workerCell.style.width = "7vw";
 
             const statusCell = document.createElement('td');
             statusCell.textContent = task.status;
+            statusCell.style.width = "7vw";
+
 
             // 데이터 셀(칸)을 행에 추가
             row.appendChild(taskNameCell);
@@ -58,7 +62,7 @@ fetch('/api/team/' + teamId + '/tasks', {
             row.appendChild(statusCell);
 
             // 미완료 업무와 완료 업무 섹션에 행 추가
-            if (task.status === 'DONE') {
+            if (task.status === '완료') {
                 completeSection.appendChild(row);
             } else {
                 incompleteSection.appendChild(row);
