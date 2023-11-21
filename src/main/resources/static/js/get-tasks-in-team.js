@@ -22,12 +22,14 @@ fetch('/api/team/' + teamId + '/tasks', {
 
         const taskNameHeader = document.createElement('th');
         taskNameHeader.textContent = "작업 이름";
-
+        taskNameHeader.style.width = "35vw";
         const workerHeader = document.createElement('th');
         workerHeader.textContent = "작업자";
+        workerHeader.style.width = "7vw";
 
         const statusHeader = document.createElement('th');
         statusHeader.textContent = "상태";
+        statusHeader.style.width = "7vw";
 
         headerRow.appendChild(taskNameHeader);
         headerRow.appendChild(workerHeader);
