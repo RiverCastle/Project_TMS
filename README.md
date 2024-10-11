@@ -2,11 +2,6 @@
 Task Management System는 조직의 다양한 구조를 구현하고, 각 조직별 업무 관리에 도움을 드리기 위한 웹서비스입니다.  
 프로젝트 소개자료 pdf 다운로드 [업무관리시스템 소개자료.pdf](https://github.com/RiverCastle/Project_TMS/files/13736640/_.pdf)
 
-## 설치 방법 또는 사용법
-1. 프로젝트를 클론해주세요.
-2. Redis를 다운로드 해주세요.
-3. DBMS를 다운로드 받아주세요. (MySQL)
-4. 프로젝트를 실행해주세요.
 
 ## 주요 기능 소개
 ![기능 정리](https://github.com/RiverCastle/Project_TMS/assets/131141755/65a3fb6f-4a94-472c-a6c1-faf4b54e80e3)
